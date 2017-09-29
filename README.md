@@ -12,12 +12,20 @@ output:
     toc_depth: 2
 ---
 
+# Installation
 
-# Overview
+To install, run the following code:
+```{r installation}
+install.packages("devtools")
+library("devtools")
+devtools::install_github("wlktan/LireNlpSystem")
+library(LireNlpSystem)
+```
+# About
 
 See project description here: https://docs.google.com/a/uw.edu/document/d/1O52W7TtHBVT8kDHx6PuBfVOKpJGo9FKp-T2bESbyrmM/edit?usp=sharing
 
-# R functions summary/progress
+# Functions overview
 
 There are five main R functions in this package:  
 
@@ -57,7 +65,7 @@ segmented.reports <- bind_rows(SectionSegmentation(annotated.df, site = 1),
 Empty file to be developed
 
 ```{r get_regex_negex}
-regex.from.java <- GetRegexNegex(segmented.reports) 
+regex.from.java <- GetRegexNegex(segmented.reports) # dummy function
 ```
 
 ## AggregateRegex
@@ -95,6 +103,12 @@ finding.list <- c("Scoliosis")
 nlp.preds <- ApplyNLPModels(finding.list, text.dfm, regex.df)
 ```
 
+Finally, you can output the dataframe into a CSV file
 
-# Java methods summary/progress
+```{r}
+write.csv(nlp.preds, "nlp_predictions.csv", row.names = FALSE)
+```
+
+# Upcoming developments
+Working on rewriting Java code for interface with R through rJava (9/29/2017).
 
