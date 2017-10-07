@@ -12,4 +12,5 @@ Imports: rJava,
     dplyr,
     tidyr,
     quanteda,
-    caret
+    caret,
+    xlsx

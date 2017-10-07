@@ -29,8 +29,8 @@ SectionSegmentation(df, site = NULL, hst_rgx = NULL, exam_rgx = NULL,
 \item{liretext_rgx}{Defaults to regular expressions for LIRE macro; don't change unless there's a good reason to.}
 }
 \value{
-The input data frame with additional columns exam, comparison, technique, finding, impression.
-Finding and impression columns are always non-empty. If separation is not possible, the entire imagereporttext is returned in finding.
+The input data frame with additional columns exam, comparison, technique, body, impression.
+The body column is always non-empty: the entire imagereporttext is returned in body if separation is not possible.
 }
 \description{
 This function segments the imagereporttext column of a data frame into columns containing text

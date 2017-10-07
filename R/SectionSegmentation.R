@@ -16,8 +16,8 @@
 #' @import dplyr
 #' @import tidyr
 #' @export
-#' @return The input data frame with additional columns exam, comparison, technique, finding, impression.
-#' Finding and impression columns are always non-empty. If separation is not possible, the entire imagereporttext is returned in finding.
+#' @return The input data frame with additional columns exam, comparison, technique, body, impression.
+#' The body column is always non-empty: the entire imagereporttext is returned in body if separation is not possible.
 #' @examples
 #' SectionSegmentation(input.df, site = 2)
 

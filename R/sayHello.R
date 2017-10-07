@@ -11,10 +11,11 @@
 #' sayHello("Jason")
 
 sayHello <- function(username){
-  java.program <- .jnew("RuleBasedNLP", check = TRUE) # create instance of RuleBasedNLP class in saved JAR
+  java.program <- .jnew("edu.uw.biostat.lire.RuleBasedNLP.RuleBasedNLP", check = TRUE) # Need the whole package path to the class file
   out <- .jcall(obj = java.program, 
-                returnSig = "S", # outputs to a string
+                returnSig = "Ljava/lang/String;", # outputs to a string
                 method = "SayHello", # invoke the SayHello method in RuleBasedNLP class
                 username)
   return(out)
 }
+

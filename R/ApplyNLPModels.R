@@ -24,7 +24,7 @@ ApplyNLPModels <- function(finding.list, text.dfm, regex.df){
     print(finding)
     
     ##################### Generate machine-learning NLP predictions ################
-    modelFile <- try(read.xlsx("C:/Users/wlktan/Desktop/LireNlpSystem/ml_model_coef.xlsx",
+    modelFile <- try(read.xlsx("ml_model_coef.xlsx",
                                sheetName = finding,
                                header = TRUE))
     
@@ -57,8 +57,8 @@ ApplyNLPModels <- function(finding.list, text.dfm, regex.df){
       
     
     ### rule-based v.s. machine-learning binary predictions
-    print(table(all.preds[,paste0(finding,"_rules")],
-                all.preds[,paste0(finding,"_mlClass")]))
+    # print(table(all.preds[,paste0(finding,"_rules")],
+    #             all.preds[,paste0(finding,"_mlClass")]))
   }
   
   return(all.preds)

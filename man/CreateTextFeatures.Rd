@@ -4,17 +4,17 @@
 \alias{CreateTextFeatures}
 \title{Creates text-based features from a radiology report corpus}
 \usage{
-CreateTextFeatures(segmented.reports, id_col = "imageid",
-  text.cols = c("body", "impression"), all.stop.words = setdiff(stopwords(),
-  c("no", "not", "nor")), finding.dictionary = NULL, min_count = 50,
-  min_doc = 5, n_gram_length = 3)
+CreateTextFeatures(text.df, id_col = "imageid", text.cols = c("body",
+  "impression"), all.stop.words = setdiff(stopwords(), c("no", "not", "nor")),
+  finding.dictionary = NULL, min_count = 50, min_doc = 5,
+  n_gram_length = 3)
 }
 \arguments{
-\item{segmented.reports}{Input data frame with}
+\item{text.df}{Input data frame with}
 
-\item{id_col}{The ID column in segmented.reports, defaults to imageid}
+\item{id_col}{The ID column in text.df, defaults to imageid}
 
-\item{text.cols}{The text columns in segmented.reports, defaults to c("body", "impression")}
+\item{text.cols}{The text columns in text.df, defaults to c("body", "impression")}
 
 \item{all.stop.words}{List of stop words, defaults to English stopword list excluding negation}
 
@@ -34,6 +34,6 @@ each column is a feature, and the cells are the counts in the document.
 This function creates text-based features from a radiology report corpus
 }
 \examples{
-CreateTextFeatures(segmented.reports)
+CreateTextFeatures(text.df)
 }
 \keyword{CreateTextFeatures}

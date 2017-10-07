@@ -4,10 +4,10 @@
 \alias{AggregateRegex}
 \title{Inputs a dataframe, and outputs a data frame}
 \usage{
-AggregateRegex(df)
+AggregateRegex(regex.df.java)
 }
 \arguments{
-\item{df}{The input data frame}
+\item{regex.df.java}{The input data frame, which is an output from Java JAR file}
 }
 \value{
 df
