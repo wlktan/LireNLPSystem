@@ -1,15 +1,5 @@
 ---
 title: LireNLPSystem package documentation
-output:
-  pdf_document:
-    toc: no
-    toc_depth: '2'
-  html_document:
-    df_print: paged
-    fig_height: 6
-    fig_width: 8
-    toc: no
-    toc_depth: 2
 ---
 
 # Installation

@@ -1,6 +1,6 @@
 #' Inputs a dataframe, and outputs a data frame
 #'
-#' @param annotated.df The input data frame
+#' @param segmented.reports The input data frame
 #' @param imageid String of column that indexes report images; defaults to patientID
 #' @param siteID String of column that indexes study site; defaults to siteID
 #' @param imageTypeID String of column that indexes imaging modality; defaults to imageTypeID
@@ -24,7 +24,7 @@
 #' @examples
 #' GetRegexNegex(df)
 
-GetRegexNegex <- function(annotated.df,
+GetRegexNegex <- function(segmented.reports,
                           imageid = "patientID",
                           siteID = "siteID",
                           imageTypeID = "imageTypeID",
@@ -33,16 +33,16 @@ GetRegexNegex <- function(annotated.df,
   java.program <- .jnew("edu.uw.biostat.lire.RuleBasedNLP.RuleBasedNLP", check = TRUE) # Need the whole package path to the class file
   #.jmethods(java.program) # shows all the methods
   
-  annotated.df <- annotated.df %>%
-    mutate_all(as.character) %>% # each col in annotated.df needs to be a Java type (number or string); factors not allowed
+  segmented.reports <- segmented.reports %>%
+    mutate_all(as.character) %>% # each col in segmented.reports needs to be a Java type (number or string); factors not allowed
     rbind(colnames(.), .)
 
-  out.df <- .jarray(lapply(annotated.df, .jarray)) %>% # Turn df into Java object
+  out.df <- .jarray(lapply(segmented.reports, .jarray)) %>% # Turn df into Java object
     .jcast(., new.class = "[[Ljava/lang/String;") %>% # Cast to String[][]
     .jcall(obj = java.program, 
            returnSig = "[[Ljava/lang/String;", # Outputs a String[][]
            method = "GetRegexNegex", 
-           annotated.df,
+           segmented.reports,
            imageid,
            siteID,
            imageTypeID,
@@ -61,6 +61,10 @@ GetRegexNegex <- function(annotated.df,
                         "regex", 
                         "negex", 
                         "keyword")
+  
+  out.df <- as.data.frame(out.df)
+  
+  ## Need table(out.df$regex, out.df$negex) to have 0 in topleft corner
 
   return(out.df)
 }

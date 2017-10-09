@@ -4,12 +4,12 @@
 \alias{GetRegexNegex}
 \title{Inputs a dataframe, and outputs a data frame}
 \usage{
-GetRegexNegex(annotated.df, imageid = "patientID", siteID = "siteID",
+GetRegexNegex(segmented.reports, imageid = "patientID", siteID = "siteID",
   imageTypeID = "imageTypeID", bodyText = "body",
   impressionText = "impression")
 }
 \arguments{
-\item{annotated.df}{The input data frame}
+\item{segmented.reports}{The input data frame}
 
 \item{imageid}{String of column that indexes report images; defaults to patientID}
 

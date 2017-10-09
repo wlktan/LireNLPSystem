@@ -17,6 +17,7 @@ Inputs a dataframe, and outputs a data frame
 }
 \examples{
 AggregateRegex(df)
+
 }
 \keyword{Java}
 \keyword{load}
