@@ -1,8 +1,8 @@
 ---
-title: LireNLPSystem package documentation
+# LireNLPSystem package documentation
 ---
 
-# Installation
+### Installation
 
 To install, run the following code:
 ```{r installation}
@@ -22,13 +22,13 @@ install.packages("caret")
 install.packages("xlsx")
 
 ```
-# About
+### About
 
 See project description here: https://docs.google.com/a/uw.edu/document/d/1O52W7TtHBVT8kDHx6PuBfVOKpJGo9FKp-T2bESbyrmM/edit?usp=sharing
 
 WARNING: This package has not been fully tested; use at your own risk. If you try it out with examples outside of the tutorial, please also be mindful that this package has NOT been optimized for speed (highly recommend you chunk your data sets into smaller subsets - like 25 rows or so).
 
-# Functions overview
+### Functions overview
 
 There are five main R functions in this package:  
 
@@ -40,7 +40,7 @@ There are five main R functions in this package:
 
 which together defines a workflow/pipeline for getting NLP predictions of radiographic findings from radiology text reports.
 
-## SectionSegmentation
+#### SectionSegmentation
 Takes in a data frame and outputs the sectioned report text.
 
 Additional features to be developed:
@@ -71,7 +71,7 @@ View(segmented.reports)
 
 ```
 
-## GetRegexNegex
+#### GetRegexNegex
 Takes in segmented reports data frame and runs JAR file to obtain sentence-by-sentence rules-based NLP predictions.
 
 Additional features to be developed:
@@ -87,7 +87,7 @@ regex.df.java <- GetRegexNegex(segmented.reports,
                                impressionText = "impression")
 ```
 
-## AggregateRegex
+#### AggregateRegex
 Takes in regex.df.java data frame and aggregates the regex and negex predictions for every report and finding, according to the following logic:  
 * If there is at least one non-negated sentence in a section (body or impression), regex = 1 in the section.
 * If there is conflict between body and impression, go with body.
@@ -102,7 +102,7 @@ regex.df <- AggregateRegex(regex.df.java)
 
 ```
 
-## CreateTextFeatures
+#### CreateTextFeatures
 
 Takes as input the segmented reports data frame, and outputs a data frame with text-based predictors. 
 
@@ -121,7 +121,7 @@ text.dfm <- CreateTextFeatures(segmented.reports,
                      n_gram_length = 3)
 ```
 
-## ApplyNLPModels
+#### ApplyNLPModels
 
 Takes as input the text-based predictors and regex/negex predictors, outputs NLP predictions (rules and machine-learning).
 
@@ -141,7 +141,7 @@ View(nlp.preds)
 ```
 
 
-# News and updates
+### News and updates
 9/29/2017: Working on rewriting Java code for interface with R through rJava.
 
 10/6/2017: 
