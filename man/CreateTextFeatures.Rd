@@ -4,36 +4,37 @@
 \alias{CreateTextFeatures}
 \title{Creates text-based features from a radiology report corpus}
 \usage{
-CreateTextFeatures(text.df, id_col = "imageid", text.cols = c("body",
-  "impression"), all.stop.words = setdiff(stopwords(), c("no", "not", "nor")),
-  finding.dictionary = NULL, min_count = 50, min_doc = 5,
-  n_gram_length = 3)
+CreateTextFeatures(segmented.reports, id_col = "imageid",
+  text.cols = c("body", "impression"),
+  all.stop.words = setdiff(stopwords(), c("no", "not", "nor")),
+  finding.dictionary = NULL, min_doc_prop = 0, max_doc_prop = 1,
+  n_gram_length = 1)
 }
 \arguments{
-\item{text.df}{Input data frame with}
+\item{segmented.reports}{Input data frame with}
 
-\item{id_col}{The ID column in text.df, defaults to imageid}
+\item{id_col}{The ID column in segmented.reports, defaults to imageid}
 
-\item{text.cols}{The text columns in text.df, defaults to c("body", "impression")}
+\item{text.cols}{Vector of findings text column names in segmented.reports, defaults to  c("body","impression")}
 
 \item{all.stop.words}{List of stop words, defaults to English stopword list excluding negation}
 
 \item{finding.dictionary}{Dictionary object to map findings, defaults to NULL}
 
+\item{n_gram_length}{Unigram, bigram, or trigram features; defaults to 3 (trigrams)}
+
 \item{min_count}{Minimum count of total word occurence across all documents/reports}
 
 \item{min_doc}{Minimum count of number of documents for which word occurs}
-
-\item{n_gram_length}{Unigram, bigram, or trigram features; defaults to 3 (trigrams)}
 }
 \value{
-A document frequency matrix with each row as a unique report, 
+A document frequency matrix with each row as a unique report,
 each column is a feature, and the cells are the counts in the document.
 }
 \description{
-This function creates text-based features from a radiology report corpus
+This function creates N-gram features from a radiology report corpus, where N-gram
 }
 \examples{
-CreateTextFeatures(text.df)
+CreateTextFeatures(segmented.reports)
 }
 \keyword{CreateTextFeatures}

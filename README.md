@@ -8,8 +8,8 @@ To install, run the following code:
 ```{r installation}
 install.packages("devtools")
 library("devtools")
-devtools::install_github("wlktan/LireNlpSystem")
-library(LireNlpSystem)
+devtools::install_github("wlktan/LireNLPSystem")
+library(LireNLPSystem)
 ```
 
 You should also have the following installed:
@@ -33,10 +33,10 @@ WARNING: This package has not been fully tested; use at your own risk. If you tr
 There are five main R functions in this package:  
 
 * SectionSegmentation
-* GetRegexNegex
-* AggregateRegex
+* RuleBasedNLP_JavaSentence
+* RuleBasedNLP
 * CreateTextFeatures
-* ApplyNLPModels
+* MachineLearningNLP
 
 which together defines a workflow/pipeline for getting NLP predictions of radiographic findings from radiology text reports.
 
@@ -50,9 +50,10 @@ Additional features to be developed:
 
 Example usage (these reports are fake data).
 ```{r section_segmentation}
-library(LireNlpSystem)
+library(LireNLPSystem)
 
-annotated.df <- data.frame(patientID = c("W231", "W2242", "W452", "5235"),
+text.df <- data.frame(patientID = c("W231", "W2242", "W452", "5235"),
+                           examID = c("631182", "1226", "2090", "1939"),
                            siteID = c(2,2,2,2),
                            imageTypeID = c(1,3,1,3),
                            imagereporttext = c("** HISTORY **: Progressive radicular symptoms for 8 weeks Comparison study: None 
@@ -66,28 +67,44 @@ annotated.df <- data.frame(patientID = c("W231", "W2242", "W452", "5235"),
                                                ** IMPRESSION **:  Foraminal stenosis."))
 
 
-segmented.reports <- SectionSegmentation(annotated.df, site = 2)
+segmented.reports <- SectionSegmentation(text.df, site = 2)
 View(segmented.reports)
 
 ```
 
-#### GetRegexNegex
+#### RuleBasedNLP_JavaSentence
 Takes in segmented reports data frame and runs JAR file to obtain sentence-by-sentence rules-based NLP predictions.
 
 Additional features to be developed:
 * Additional text pre-processing
 
 Example usage:
-```{r get_regex_negex}
-regex.df.java <- GetRegexNegex(segmented.reports,
-                               imageid = "patientID",
-                               siteID = "siteID",
-                               imageTypeID = "imageTypeID",
-                               bodyText = "body",
-                               impressionText = "impression")
+```{r rb_java}
+### Create unique identifier for each report 
+### For LIRE data, it is patientID + examID
+
+segmented.reports <- segmented.reports %>%
+  dplyr::mutate(imageid = paste(patientID, examID, sep = "_"))
+
+### This is the list of LIRE findings
+finding.list <- c("spondylolisthesis",
+                  "annular_fissure",
+                  "disc_bulge",
+                  "disc_degeneration",
+                  "disc_desiccation",
+                  "disc_height_loss",
+                  "disc_protrusion",
+                  "facet_degeneration")
+                      
+regex.df.java <- RuleBasedNLP_JavaSentence(segmented.reports,
+                               imageid = "imageid",
+                               bodyText = "preprocessed_findings",
+                               impressionText = "preprocessed_impression",
+                               findings_longstring = paste(finding.list,collapse = ";")
+                               )
 ```
 
-#### AggregateRegex
+#### RuleBasedNLP
 Takes in regex.df.java data frame and aggregates the regex and negex predictions for every report and finding, according to the following logic:  
 * If there is at least one non-negated sentence in a section (body or impression), regex = 1 in the section.
 * If there is conflict between body and impression, go with body.
@@ -97,8 +114,11 @@ Additional features to be developed:
 
 Example usage:
 
-```{r aggregate_regex}
-regex.df <- AggregateRegex(regex.df.java) 
+```{r rb}
+regex.df.list <- RuleBasedNLP(regex.df.java) 
+
+regex.df.wide <- regex.df.list$regex.df.wide
+rules.nlp.df <- regex.df.list$rules.nlp.df
 
 ```
 
@@ -111,33 +131,65 @@ Additional features to be developed:
 
 Example usage:
 ```{r create_text_features}
-text.dfm <- CreateTextFeatures(segmented.reports,  
-                     id_col = "patientID", 
-                     text.cols = c("body", "impression"),
-                     all.stop.words = setdiff(stopwords(), c("no", "not", "nor")),
-                     finding.dictionary = NULL,
-                     min_count = 1,
-                     min_doc = 1,
-                     n_gram_length = 3)
+unigrams <- CreateTextFeatures(as.data.frame(segmented.reports),  
+                               id_col = "imageid", 
+                               text.cols = c("preprocessed_findings","preprocessed_impression"),
+                               n_gram_length = 1)
+bigrams <- CreateTextFeatures(as.data.frame(segmented.reports),  
+                               id_col = "imageid", 
+                               text.cols = c("preprocessed_findings","preprocessed_impression"),
+                               n_gram_length = 2)
+trigrams <- CreateTextFeatures(as.data.frame(segmented.reports),  
+                               id_col = "imageid", 
+                               text.cols = c("preprocessed_findings","preprocessed_impression"),
+                               n_gram_length = 3)
+
+text.dfm <- unigrams %>%
+  inner_join(bigrams, by = "imageid") %>%
+  inner_join(trigrams, by = "imageid")
+colnames(text.dfm) <- gsub("PREPROCESSED_FINDINGS", "BODY", colnames(text.dfm))
+colnames(text.dfm) <- gsub("PREPROCESSED_IMPRESSION", "IMP", colnames(text.dfm))
 ```
 
-#### ApplyNLPModels
+#### MachineLearningNLP
 
-Takes as input the text-based predictors and regex/negex predictors, outputs NLP predictions (rules and machine-learning).
+Takes as input the text-based predictors and regex/negex predictors, outputs Machine-Learning NLP predictions
 
 Additional features to be developed:
 * Fix bug to read in model_coef.xlsx file from the R package properly, or alternative ways to load data.
 
 
 Example usage:
-```{r apply_nlp_models}
+```{r ml}
 
-finding.list <- c("Annular Fissure", "Disc Bulge", "Facet Degeneration")
-nlp.preds <- ApplyNLPModels(finding.list, 
-                            text.dfm, 
-                            regex.df)
+ftr <- segmented.reports %>% 
+  dplyr::select(imageid, siteID, imageTypeID) %>%
+  dplyr::rename(site = siteID,
+                modality = imageTypeID) %>%
+  dplyr::mutate(modality = ifelse(modality == 1, "XR", "MR")) %>%
+  dplyr::mutate_all(as.factor)
+
+site.and.modality <- predict(dummyVars(imageid ~ ., data = ftr), newdata = ftr) %>%
+  as.data.frame() %>%
+  dplyr::mutate(imageid = ftr$imageid)
+colnames(site.and.modality) <- gsub("\\.", "_", colnames(site.and.modality))
+
+text.dfm <- text.dfm %>%
+  left_join(site.and.modality, by = "imageid")
+
+### Apply machine-learning model tuned parameters
+ml.nlp.df <- MachineLearningNLP(finding.list, 
+                         text.dfm, 
+                         regex.df.wide,
+                         grouping_var = "imageid")
                             
-View(nlp.preds)
+### Combine rules and ML into single data.frame
+nlp.df <- segmented.reports %>% dplyr::select(imageid, siteID, imageTypeID) %>%
+  left_join(rules.nlp.df, by = "imageid") %>%
+  left_join(ml.nlp.df, by = "imageid") %>%
+  separate(imageid, into = c("patientID", "examID"), sep = "_")
+
+View(nlp.df)
 ```
 
 
@@ -152,3 +204,5 @@ View(nlp.preds)
   + Speed up data processing especially when passing between R/Java
   + Re-writing code for generalizability.
 
+9/19/2017: 
+* Updated functions and documentation

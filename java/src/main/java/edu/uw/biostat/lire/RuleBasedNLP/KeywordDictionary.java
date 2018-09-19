@@ -18,290 +18,9 @@ public class KeywordDictionary implements Map {
 	}
 
 	Map<String, String[]> initialize(){
-		// ################ START RARE & SERIOUS FINDINGS #############################
-	/*	String[] AorticAneurysm = {"aaa", "AAA",
-				"abdominal\\s*aortic\\s*aneurysm",
-				"aortic\\s*aneurysm","aneurysm(\\s*\\w*){1,4}aorta",
-				"aortic\\s*aneurys\\w*\\s*enlargement","enlargement(\\s*\\w*){1,4}aorta",
-				"aortic\\s*dilatation","dilatation(\\s*\\w*){1,4}aorta",
-				"aortic\\s*dilation", "dilation(\\s*\\w*){1,4}aorta",
-				"borderline\\s*aaa",
-				"ectasia"};
+		// ################ THE 26 LIRE FINDINGS (in order of ARAD paper Table 2) #############################
 		
-		String[] CordCompression = {
-				"(cord|conus|syrinx)\\s*compression", "compression(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*damage", "damage(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*effacem", "effac\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*imping", "imping\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*indent", "indent\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*injury", "injury\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*deform", "deform\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*obliteration", "obliteration\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*flat", "flat\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*indentation", "indent\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)"};
-	
-		String[] CaudaEquinaCompression = {
-				"cauda\\s*equina\\s*compress","compression(\\s*\\w*){1,4}(cauda\\s*equina)",
-				"cauda\\s*equina\\s*compromise","compromise(\\s*\\w*){1,4}(cauda\\s*equina)",
-				"cauda\\s*equina\\s*syndrome"
-				};
-	
-		String[] CordSignalAbnormality = {
-				"(cord|conus|syrinx)\\s*abnormal\\s*signal", "abnormal\\s*signal(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*high\\s*signal", "high\\s*signal(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*high\\s*t.?(1|2)", "high\\s*t.?(1|2)(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*hyperintensity", "hyperintensity(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*increased\\s*intensity", "increased\\s*intensity(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*low\\s*t.?(1|2)", "low\\s*t.?(1|2)(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*signal\\s*loss", "signal\\s*loss(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*decreas\\w*\\s*t.?(1|2)", "decreas\\w*\\s*t.?(1|2)(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*flat", "flat\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
-				"(cord|conus|syrinx)\\s*indentation", "indent\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)"};*/
-		
-		String[] Fracture = {"callous\\s*form",
-				"fracture", 
-				"stress\\s*reaction",
-				"subluxation",
-				"wedg",
-				"convexity",
-				"variability\\s*(in)?\\s*morphology",
-				"variability\\s*(in)\\s*size",
-				"deformity",
-				"scallop",
-				"depression", 
-		"loss\\s*(of)?\\s*end\\s*plate\\s*vertebral\\s*body"};
-		
-		// Specificity of location??
-		/*String[] Infection = {"abscess",
-				"arachnoiditis",
-				"discitis",
-				"diskitis",
-				"infectio",
-				"osteomyelitis",
-				"phlegmon",
-				"fluid\\s*collection"};
-
-		String[] SpinalMalignancy = {
-				"(bone|cord|spin|vertebra)\\s*cancer", "cancer(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"(bone|cord|spin|vertebra)\\s*cyst", "cyst(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"(bone|cord|spin|vertebra)\\s*mass", "mass(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"(bone|cord|spin|vertebra)\\s*(destruct\\w*\\s*bony\\s*lesion)", "(destruct\\w*\\s*bony\\s*lesion)(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"destructive\\s*process\\s*not\\s*excluded",
-				"diffuse\\s*marrow\\s*replacing\\s*process",
-				"(bone|cord|spin|vertebra)\\s*(lytic\\s*lesion)", "(lytic\\s*lesion)(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"(bone|cord|spin|vertebra)\\s*(malignan)", "(malignan)(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"(bone|cord|spin|vertebra)\\s*metastasis", "metastasis(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"(bone|cord|spin|vertebra)\\s*metastasize", "metastasize(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"(bone|cord|spin|vertebra)\\s*metastases", "metastases(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"(bone|cord|spin|vertebra)\\s*mets\\s", "mets\\s(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"(bone|cord|spin|vertebra)\\s*moth.?eaten", "moth.?eaten(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"(bone|cord|spin|vertebra)\\s*neoplasm", "neoplasm(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"(bone|cord|spin|vertebra)\\s*(pathologic\\s*fracture)", "(pathologic\\s*fracture)(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"(bone|cord|spin|vertebra)\\s*plasmacytoma", "plasmacytoma(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
-				"questionable\\s*well\\s*demarcated\\s*lucent\\s*area", 
-				"(bone|cord|spin|vertebra)\\s*tumor", "tumor(\\s*\\w*){1,4}(bone|cord|spin|vertebra)"
-				
-		};
-
-		//(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)
-
-		String[] ExtraSpinalMalignancy = {
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*cancer", "cancer(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*cyst", "cyst(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*mass", "mass(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*(destruct\\w*\\s*bony\\s*lesion)", "(destruct\\w*\\s*bony\\s*lesion)(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"destructive\\s*process\\s*not\\s*excluded",
-				"diffuse\\s*marrow\\s*replacing\\s*process",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*(lytic\\s*lesion)", "(lytic\\s*lesion)(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*(malignan)", "(malignan)(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*metastasis", "metastasis(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*metastasize", "metastasize(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*metastases", "metastases(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*mets\\s", "mets\\s(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*moth.?eaten", "moth.?eaten(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*neoplasm", "neoplasm(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*(pathologic\\s*fracture)", "(pathologic\\s*fracture)(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*plasmacytoma", "plasmacytoma(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
-				"questionable\\s*well\\s*demarcated\\s*lucent\\s*area", 
-				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*tumor", "tumor(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)"
-				
-		};
-		
-
-		
-		String[] Spondyloarthropathy = {"ankylosing\\s*spondylitis",
-				"ankylosis(\\s*\\w*){1,4}sacroiliac\\s*joints",
-				"arthropathy(\\s*\\w*){1,4}(inflammatory\\s*bowel\\s*disease|ibd)",
-				"reactive\\s*arthritis",
-				"reiter.?s\\s*syndrome",
-				"sacroiliitis",
-				"spondyloarthropathy",
-				"spondyloarthritis"};
-		
-		String[] PositiveAlert = {"flagged\\s*as\\s*abnormal",
-				"annotated\\s*as\\s*abnormal",
-				"designated\\s*as\\s*abnormal",
-				"POSITIVE\\s*ALERT",
-				"positive\\s*alert"};
-		
-		FindingListKeywords.put("aortic_aneurysm", AorticAneurysm);
-		FindingListKeywords.put("cord_compression", CordCompression);
-		FindingListKeywords.put("cauda_equina_compression", CaudaEquinaCompression);
-		FindingListKeywords.put("cord_signal_abnormality", CordSignalAbnormality);
-		FindingListKeywords.put("fracture", Fracture);
-		FindingListKeywords.put("infection", Infection);
-		FindingListKeywords.put("spinal_malignancy", SpinalMalignancy);
-		FindingListKeywords.put("extra_spinal_malignancy", ExtraSpinalMalignancy);
-		FindingListKeywords.put("spondyloarthropathy", Spondyloarthropathy);
-		FindingListKeywords.put("positive_alert", PositiveAlert);*/
-		
-		
-		// ################ END RARE & SERIOUS FINDINGS #############################
-		
-		
-		String[] CentralStenosis = {"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*stenos(i|e)s", 
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*attenuat", 
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*borderline\\*size",
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*bony\\s*compromise", 
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*broad\\s*component", 
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*compres", 
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*deflect",
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*effac", 
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*flatten", 
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*impingement", 
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*indentation", 
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*narrow", 
-				"small\\s*diameter\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)", 
-				"crowding\\s*(of)?\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)",
-				"components\\s*(to)?\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)",
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*compromise", 
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*encroachment",
-				"extend\\s*(into)?\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)",
-				"fills\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)",
-				"into\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)", 
-				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*involved", 
-				"large(ly)?\\s*occupies\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)", 
-				"protrusion\\s*(into)?\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)",
-				"within\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)",	
-		"loss of epidural fat"};
-
-		String[] LateralRecessStenosis = {
-				"attenuate(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}attenuate",
-				"borderline\\s*size(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}borderline\\s*size",
-				"bony\\s*\\w*compromi(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}bony\\s*\\w*compromi",
-				"broad\\s*component(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}broad\\s*component",
-				"(?<!non)compres(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}(?<!non)compres\\w*",
-				"deflect(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}deflect",
-				"efface(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}efface",
-				"flatten(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}flatten",
-				"imping(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}imping",
-				"indentation(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}indentation",
-				"(?<!non)narrow(\\w*\\s*){1,5}(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}(?<!non)narrow",
-				"retropulsion(\\w*\\s*){1,5}(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}retropulsion",
-				"small(\\w*\\s*){1,4}diameter(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}small(\\w*\\s*){1,4}diameter",
-				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,4}stenos\\w*",
-				"stenos(\\w*\\s*){1,4}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-
-				// Intrusion synonyms
-				"along(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"crowding(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"components\\s*to(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"encroach(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"extending(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"fills(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"into(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"within(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"largely\\s*occupies(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"truncation(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
-				"dis(c|k)\\s*protru(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)"
-		};
-
-		String[] ForaminalStenosis = {
-				"attenuate(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}attenuate",
-				"borderline\\s*size(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}borderline\\s*size",
-				"bony\\s*\\w*compromi(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}bony\\s*\\w*compromi",
-				"broad\\s*component(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}broad\\s*component",
-				"(?<!non)compres(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}(?<!non)compres\\w*",
-				"deflect(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}deflect",
-				"efface(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}efface",
-				"flatten(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}flatten",
-				"imping(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}imping",
-				"indentation(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}indentation",
-				"(?<!non)narrow(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}(?<!non)narrow",
-				"retropulsion(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}retropulsion",
-				"small(\\w*\\s*){1,4}diameter(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}small(\\w*\\s*){1,4}diameter",
-				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,4}stenos\\w*",
-				"stenos(\\w*\\s*){1,4}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-
-				// Intrusion synonyms
-				"along(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"crowding(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"components\\s*to(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"encroach(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"extending(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"fills(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"into(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"largely\\s*occupies(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-				"truncation(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
-		"dis(c|k)\\s*protru(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)"};
-
-		String[] AnyStenosis = {"spinal\\s*stenos","stenos(e|i)s"};
-		AnyStenosis = ArrayUtils.addAll(AnyStenosis, CentralStenosis);
-		AnyStenosis = ArrayUtils.addAll(AnyStenosis, ForaminalStenosis);
-		AnyStenosis = ArrayUtils.addAll(AnyStenosis, LateralRecessStenosis);
-
-
-		String[] EndplateEdema = {		
-				// endplate <-> edema
-				"end\\s*plate(\\w*\\s*){1,3}edema",
-				"edema(\\w*\\s*-*\\*/*){1,10}end\\s*plate",
-
-				// modic <-> type1
-				"type.?(1|i|one)(?!i)(\\w*\\s*){1,3}m(o|e)dic",
-				"m(o|e)dic(\\w*\\s*){1,3}type.?(1|i|one)(?!i)(-(2|ii|two))?",
-
-				// acute phase degenerative signal change
-				"acute\\s*phase(\\w*\\s*){1,5}change",
-				"acute\\s*degenerative\\s*end\\s*plate\\s*change",
-
-				// high/increased signal/stir/t2 <-> endplate
-				"(high|increased)\\s*signal(\\w*\\s*-*\\*/*){1,10}end\\s*plate",
-				"end\\s*plate(\\w*\\s*){1,3}(high|increased)\\s*signal",
-				"(high|increased)\\s*stir(\\w*\\s*-*\\*/*){1,10}end\\s*plate",
-				"end\\s*plate(\\w*\\s*){1,3}(high|increased)\\s*stir",
-				"(high|increased)\\s*t2(\\w*\\s*-*\\*/*){1,10}end\\s*plate",
-				"end\\s*plate(\\w*\\s*){1,3}(high|increased)\\s*t2",
-				"t2\\s*hyperintensity(\\w*\\s*-*\\*/*){1,10}end\\s*plate",
-				"end\\s*plate(\\w*\\s*){1,3}t2\\s*hyperintensity",
-				"type.?(1|i|one)(?!i)(\\w*\\s*-*\\*/*){1,10}end\\s*plate",
-		};
-
+		// ################ Category: Deformity
 		String[] Listhesis1 = {"grade\\s*(1|i|one)\\s(\\w*\\s*){1,3}(listhes(i|e)s|slip|subluxation|retropulsion)",
 				"(listhes(i|e)s|slip|subluxation|retropulsion)(\\w*\\s*){1,3}grade\\s*(1|i|one)\\s",
 				"(listhes(i|e)s|slip|subluxation|retropulsion)(\\w*\\s*){1,3}first\\s*(degree|grade)",
@@ -350,9 +69,54 @@ public class KeywordDictionary implements Map {
 
 		};
 
+		// Spondylolisthesis is listhesis with any grade
 		String[] Spondylolisthesis = {"spondylolisthes","listhes"};
 		Spondylolisthesis  = ArrayUtils.addAll(Spondylolisthesis , Listhesis1);
 		Spondylolisthesis  = ArrayUtils.addAll(Spondylolisthesis , Listhesis2);
+
+		String[] Scoliosis = {"scoliosis", "levoscoliosis", "curvature", "scoliotic",
+		"spine\\s*tilts"};
+
+		// ################ Category: Fracture
+		String[] Fracture = {"acute fracture",
+				"chronic fracture", 
+				"compression deformit",
+				"compression fracture",
+				"concavity *endplat",
+				"deformity endplate",
+				"deformed vertebral bod",
+				"depression anterior endplate",
+				"depression endplate",
+				"depression superior endplate", 
+				"endplate concav",
+				"endplate deformit",
+				"endplate depress",
+				"endplate impact",
+				"endplate impress",
+				"endplate indent",
+				"focal concavity",
+				"fracture",
+				"impaction endplate",
+				"impression endplate",
+				"indentation endplate",
+				"indentation superior endplate",
+				"indentation anterior endplate",
+				"microfracture",
+				"spin\\w* fracture",
+				"vertebral body height loss",
+				"vertebral height loss",
+		"wedg"};
+
+		String[] Spondylosis = {"spondylosis", "spondylitic", "spondylotic","spondylytic"};
+
+		// ################ Category: Anterior column degeneration
+
+		String[] AnnularFissure = {"ann?ul\\w+\\s*fissure",
+				"ann?ul\\w+\\s*tear",
+				"edema(\\w*\\s*){1,5}ann?ulu\\w+",
+				"high\\s*(signal)?\\s*intens\\w*\\s*zone",
+		"hiz"};
+
 
 		String[] DiscBulge = {"bulg\\w*",
 				"dis(\\w*\\s*){1,4}compl\\w*", 
@@ -360,26 +124,6 @@ public class KeywordDictionary implements Map {
 				"dis(c|k)(\\w*\\s*){1,4}spur",
 				"dis(c|k)(\\w*\\s*){1,4}ridge",
 		"spur\\w*\\s*dis(c|k)"};
-
-		String[] DiscProtrusion = {"dis(s|k)\\s*protrusion",
-		"dis(c|k)\\s*protrusion"};
-
-		String[] DiscExtrusion = {"dis(c|k)\\s*extru", 
-				"focal\\s*extru",
-				"extru(\\w*\\s*)dis(c|k)",
-				"extru(\\w*\\s*)focal",
-				"sequest\\w*",
-		"free\\s*fragm\\w*"};
-
-
-		String[] DiscDesiccation = {"dess?icc?ation",
-				"dis(c|k)(\\w*\\s*){1,4}dehydrat\\w*",
-				"dehydra(\\w*\\s*){1,4}dis(c|k)",
-				"decreas(\\w*\\s*){1,4}sign\\w*",
-				"signal(\\w*\\s*){1,4}ldecreas\\w*",
-				"los(\\w*\\s*){1,6}signal",
-		"signal(\\w*\\s*){1,4}los\\w*"};
-
 
 		String[] DiscDegeneration = {
 				// Calficication
@@ -420,6 +164,21 @@ public class KeywordDictionary implements Map {
 				// disc loss
 		"dis(c|k)\\s*loss"};
 
+		String[] DiscDesiccation = {"dess?icc?ation",
+				"dis(c|k)(\\w*\\s*){1,4}dehydrat\\w*",
+				"dehydra(\\w*\\s*){1,4}dis(c|k)",
+				"decreas(\\w*\\s*){1,4}sign\\w*",
+				"signal(\\w*\\s*){1,4}ldecreas\\w*",
+				"los(\\w*\\s*){1,6}signal",
+		"signal(\\w*\\s*){1,4}los\\w*"};
+
+
+		String[] DiscExtrusion = {"dis(c|k)\\s*extru", 
+				"focal\\s*extru",
+				"extru(\\w*\\s*)dis(c|k)",
+				"extru(\\w*\\s*)focal",
+				"sequest\\w*",
+		"free\\s*fragm\\w*"};
 
 		String[] DiscHeightLoss= {
 				"decreas(\\w*\\s*){1,4}heigh\\w*",
@@ -448,6 +207,94 @@ public class KeywordDictionary implements Map {
 				// Spelling error/variation
 		"dispace\\w*\\s*(narrow|los)\\w*"};
 
+		String[] DiscHerniation = {"herniat\\w*",
+				"dis(c|k)\\s*prolaps",
+		"extensi(\\w*\\s*){1,3}dis(c|k)\\s*material"};
+
+		String[] DiscProtrusion = {"dis(s|k)\\s*protrusion",
+		"dis(c|k)\\s*protrusion"};
+
+		String[] EndplateEdema = {		
+				// endplate <-> edema
+				"end\\s*plate(\\w*\\s*){1,3}edema",
+				"edema(\\w*\\s*-*\\*/*){1,10}end\\s*plate",
+
+				// modic <-> type1
+				"type.?(1|i|one)(?!i)(\\w*\\s*){1,3}m(o|e)dic",
+				"m(o|e)dic(\\w*\\s*){1,3}type.?(1|i|one)(?!i)(-(2|ii|two))?",
+
+				// acute phase degenerative signal change
+				"acute\\s*phase(\\w*\\s*){1,5}change",
+				"acute\\s*degenerative\\s*end\\s*plate\\s*change",
+
+				// high/increased signal/stir/t2 <-> endplate
+				"(high|increased)\\s*signal(\\w*\\s*-*\\*/*){1,10}end\\s*plate",
+				"end\\s*plate(\\w*\\s*){1,3}(high|increased)\\s*signal",
+				"(high|increased)\\s*stir(\\w*\\s*-*\\*/*){1,10}end\\s*plate",
+				"end\\s*plate(\\w*\\s*){1,3}(high|increased)\\s*stir",
+				"(high|increased)\\s*t2(\\w*\\s*-*\\*/*){1,10}end\\s*plate",
+				"end\\s*plate(\\w*\\s*){1,3}(high|increased)\\s*t2",
+				"t2\\s*hyperintensity(\\w*\\s*-*\\*/*){1,10}end\\s*plate",
+				"end\\s*plate(\\w*\\s*){1,3}t2\\s*hyperintensity",
+				"type.?(1|i|one)(?!i)(\\w*\\s*-*\\*/*){1,10}end\\s*plate",
+		};
+
+
+		String[] OsteophyteAnteriorColumn = {
+
+				// Anterior spur/osteophyte/syndesmpohyte/hypertrophic changes
+				"anterio(\\w*\\s*){1,5}spur",
+				"anterio(\\w*\\s*){1,5}osteophyt",
+				"anterio(\\w*\\s*){1,5}syndesmpohyt",
+				"anterio(\\w*\\s*){1,5}osteophyt",
+
+				// Lateral
+				"latera(\\w*\\s*){1,3}spur",
+				"latera(\\w*\\s*){1,3}osteophyt",
+				"latera(\\w*\\s*){1,3}syndesmpohyt",
+
+				// Marginal
+				"margina(\\w*\\s*){1,3}spur",
+				"margina(\\w*\\s*){1,3}osteophyt",
+				"margina(\\w*\\s*){1,3}syndesmpohyt",
+
+				// Peripheral
+				"periphera(\\w*\\s*){1,3}spur",
+				"peripher(\\w*\\s*){1,3}osteophyt",
+				"peripher(\\w*\\s*){1,3}syndesmpohyt",
+
+				// Ventral
+				"ventra(\\w*\\s*){1,3}osteophyt",
+				"ventra(\\w*\\s*){1,3}spur",
+
+				// Posterior
+				"posterio(\\w*\\s*){1,3}spur",
+				"posterio(\\w*\\s*){1,3}osteophyt",
+
+				// Endplate
+				"end\\s*plat\\w*\\s*hypertrop(\\w*\\s*){1,2}chan",
+				"end\\s*plat\\w*\\s*hypertrop(\\w*\\s*){1,2}spur",
+				"end\\s*plat(\\w*\\s*){1,2}spur",
+				"end\\s*plat(\\w*\\s*){1,2}osteophyt",
+
+				// complexes
+				"dis(c|k)\\s*osteophyt\\w*\\s*complex",
+				"dis(c|k)\\s*spur\\s*complex",
+				"dis(c|k)\\s*ridge\\s*complex",
+				"dis(c|k)\\s*complex",
+				"osteophyt\\w*\\s*complex",
+				"dis(c|k)\\s*spur",
+				"dis(c|k)\\s*and\\s*end\\s*plate\\s*osteophyt",
+
+				// Other terminology
+				"dish",
+				"apophyseal\\s*spondylos(i|e)s",
+		"spondylotic\\s*stenos(i|e)s"};
+
+
+		// ################ Category: Posterior column degeneration
+		// Note: There is more to AnyStenosis (all of synonyms of other stenosis, updated below)
+		String[] AnyStenosis = {"spinal\\s*stenos","stenos(e|i)s"};
 
 		String[] FacetDegeneration = {"(facet|joint|posterior\\s*element)(\\w*\\s*){1,4}degeneration",
 				"(facet|joint|posterior\\s*element)\\s*arthropath", 
@@ -467,12 +314,75 @@ public class KeywordDictionary implements Map {
 		"(facet|joint|posterior\\s*element)\\s*effusion"};
 
 
-		String[] AnnularFissure = {"ann?ul\\w+\\s*fissure",
-				"ann?ul\\w+\\s*tear",
-				"edema(\\w*\\s*){1,5}ann?ulu\\w+",
-				"high\\s*(signal)?\\s*intens\\w*\\s*zone",
-		"hiz"};
+		// ################ Category: Associated with leg pain
 
+		String[] CentralStenosis = {"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*stenos(i|e)s", 
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*attenuat", 
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*borderline\\*size",
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*bony\\s*compromise", 
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*broad\\s*component", 
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*compres", 
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*deflect",
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*effac", 
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*flatten", 
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*impingement", 
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*indentation", 
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*narrow", 
+				"small\\s*diameter\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)", 
+				"crowding\\s*(of)?\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)",
+				"components\\s*(to)?\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)",
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*compromise", 
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*encroachment",
+				"extend\\s*(into)?\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)",
+				"fills\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)",
+				"into\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)", 
+				"(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)\\s*involved", 
+				"large(ly)?\\s*occupies\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)", 
+				"protrusion\\s*(into)?\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)",
+				"within\\s*(central|canal|congenital|trefoil|the\\s*cal\\s*sac|arachnoid|(3|three)\\s*side)",	
+		"loss of epidural fat"};
+
+		String[] ForaminalStenosis = {
+				"attenuate(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}attenuate",
+				"borderline\\s*size(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}borderline\\s*size",
+				"bony\\s*\\w*compromi(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}bony\\s*\\w*compromi",
+				"broad\\s*component(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}broad\\s*component",
+				"(?<!non)compres(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}(?<!non)compres\\w*",
+				"deflect(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}deflect",
+				"efface(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}efface",
+				"flatten(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}flatten",
+				"imping(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}imping",
+				"indentation(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}indentation",
+				"(?<!non)narrow(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}(?<!non)narrow",
+				"retropulsion(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}retropulsion",
+				"small(\\w*\\s*){1,4}diameter(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,5}small(\\w*\\s*){1,4}diameter",
+				"(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)(\\w*\\s*){1,4}stenos\\w*",
+				"stenos(\\w*\\s*){1,4}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+
+				// Intrusion synonyms
+				"along(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"crowding(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"components\\s*to(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"encroach(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"extending(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"fills(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"into(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"largely\\s*occupies(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+				"truncation(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)",
+		"dis(c|k)\\s*protru(\\w*\\s*){1,5}(foram(a|e|i)|neur(a|o)l?\\s*foram(a|e|i)n)"};
 
 		String[] NerveRootContact = {
 				"(root|nerv\\w*\\s*r(oo)?t|neur\\w*\\s*r(oo)?t|nerv\\w*\\s*element|neur\\w*\\s*r(oo)?t|neura\\w*\\s*foram(a|e|i)n)\\s*contact",
@@ -530,118 +440,235 @@ public class KeywordDictionary implements Map {
 				"(root|nerv\\w*\\s*r(oo)?t|neur\\w*\\s*r(oo)?t|nerv\\w*\\s*element|neur\\w*\\s*r(oo)?t|neura\\w*\\s*foram(a|e|i)n)(\\w*\\s*){1,5}thicken\\w*"
 		};
 
-		// Get clarity on final finding list
-		FindingListKeywords.put("Any Stenosis", AnyStenosis); // Central, LateralRec, Foraminal, or NOS // DOC
-		FindingListKeywords.put("Central Stenosis", CentralStenosis); // DOC
-		FindingListKeywords.put("Lateral Recess Stenosis", LateralRecessStenosis); // DOC
-		FindingListKeywords.put("Foraminal Stenosis", ForaminalStenosis); // DOC
-		FindingListKeywords.put("Endplate Edema Type 1 Modic", EndplateEdema); // DOC
-		FindingListKeywords.put("Listhesis Grade 1", Listhesis1); // DOC
-		FindingListKeywords.put("Listhesis Grade 2", Listhesis2); // DOC
-		FindingListKeywords.put("Spondylolisthesis", Spondylolisthesis); // Grade 1, 2, NOS.. // DOC
-		FindingListKeywords.put("Disc Bulge", DiscBulge); // DOC
-		FindingListKeywords.put("Disc Protrusion", DiscProtrusion); // DOC
-		FindingListKeywords.put("Disc Extrusion", DiscExtrusion); // DOC
-		FindingListKeywords.put("Disc Desiccation", DiscDesiccation); // DOC
-		FindingListKeywords.put("Disc Degeneration", DiscDegeneration); // DOC
-		FindingListKeywords.put("Disc Height Loss", DiscHeightLoss); // DOC
-		FindingListKeywords.put("Facet Degeneration", FacetDegeneration); // DOC
-		FindingListKeywords.put("Annular Fissure", AnnularFissure); // DOC
-		FindingListKeywords.put("Nerve Root Contact", NerveRootContact); // DOC
-		FindingListKeywords.put("Nerve Root Displaced Compressed", NerveRootDisplacedCompressed); // DOC
+		String[] LateralRecessStenosis = {
+				"attenuate(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}attenuate",
+				"borderline\\s*size(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}borderline\\s*size",
+				"bony\\s*\\w*compromi(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}bony\\s*\\w*compromi",
+				"broad\\s*component(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}broad\\s*component",
+				"(?<!non)compres(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}(?<!non)compres\\w*",
+				"deflect(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}deflect",
+				"efface(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}efface",
+				"flatten(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}flatten",
+				"imping(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}imping",
+				"indentation(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}indentation",
+				"(?<!non)narrow(\\w*\\s*){1,5}(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}(?<!non)narrow",
+				"retropulsion(\\w*\\s*){1,5}(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}retropulsion",
+				"small(\\w*\\s*){1,4}diameter(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,5}small(\\w*\\s*){1,4}diameter",
+				"(paracentral|(?<!bi)latera\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)(\\w*\\s*){1,4}stenos\\w*",
+				"stenos(\\w*\\s*){1,4}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+
+				// Intrusion synonyms
+				"along(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"crowding(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"components\\s*to(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"encroach(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"extending(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"fills(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"into(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"within(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"largely\\s*occupies(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"truncation(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)",
+				"dis(c|k)\\s*protru(\\w*\\s*){1,5}(paracentral|(?<!bi)lateral\\s*recc?es|(?<!bi)lateral\\s*the\\s*cal\\s*sac|subarticular)"
+		};
+
+		// ################ Category: Nonspecific findings
+
+		// Any degeneration, including disc and facet
+		String[] AnyDegeneration = {"degeneration"};
+		AnyDegeneration = ArrayUtils.addAll(AnyDegeneration,DiscDegeneration);
+		AnyDegeneration = ArrayUtils.addAll(AnyDegeneration,FacetDegeneration);
 
 
 		String[] Hemangioma = {"hemangioma","hemangiomas", "venous\\s*malformation"};
-
-		String[] OsteophyteAnteriorColumn = {
-
-				// Anterior spur/osteophyte/syndesmpohyte/hypertrophic changes
-				"anterio(\\w*\\s*){1,5}spur",
-				"anterio(\\w*\\s*){1,5}osteophyt",
-				"anterio(\\w*\\s*){1,5}syndesmpohyt",
-				"anterio(\\w*\\s*){1,5}osteophyt",
-
-				// Lateral
-				"latera(\\w*\\s*){1,3}spur",
-				"latera(\\w*\\s*){1,3}osteophyt",
-				"latera(\\w*\\s*){1,3}syndesmpohyt",
-
-				// Marginal
-				"margina(\\w*\\s*){1,3}spur",
-				"margina(\\w*\\s*){1,3}osteophyt",
-				"margina(\\w*\\s*){1,3}syndesmpohyt",
-
-				// Peripheral
-				"periphera(\\w*\\s*){1,3}spur",
-				"peripher(\\w*\\s*){1,3}osteophyt",
-				"peripher(\\w*\\s*){1,3}syndesmpohyt",
-
-				// Ventral
-				"ventra(\\w*\\s*){1,3}osteophyt",
-				"ventra(\\w*\\s*){1,3}spur",
-
-				// Posterior
-				"posterio(\\w*\\s*){1,3}spur",
-				"posterio(\\w*\\s*){1,3}osteophyt",
-
-				// Endplate
-				"end\\s*plat\\w*\\s*hypertrop(\\w*\\s*){1,2}chan",
-				"end\\s*plat\\w*\\s*hypertrop(\\w*\\s*){1,2}spur",
-				"end\\s*plat(\\w*\\s*){1,2}spur",
-				"end\\s*plat(\\w*\\s*){1,2}osteophyt",
-
-				// complexes
-				"dis(c|k)\\s*osteophyt\\w*\\s*complex",
-				"dis(c|k)\\s*spur\\s*complex",
-				"dis(c|k)\\s*ridge\\s*complex",
-				"dis(c|k)\\s*complex",
-				"osteophyt\\w*\\s*complex",
-				"dis(c|k)\\s*spur",
-				"dis(c|k)\\s*and\\s*end\\s*plate\\s*osteophyt",
-
-				// Other terminology
-				"dish",
-				"apophyseal\\s*spondylos(i|e)s",
-		"spondylotic\\s*stenos(i|e)s"};
-
-		String[] Spondylosis = {"spondylosis", "spondylitic", "spondylotic","spondylytic"};
-
-		String[] DiscHerniation = {"herniat\\w*",
-				"dis(c|k)\\s*prolaps",
-		"extensi(\\w*\\s*){1,3}dis(c|k)\\s*material"};
 
 		String[] Spondylolysis = {"spondylolysis",
 				"pars\\s*defect", 
 				"pars\\s*fractur",
 		"isthmic\\s*spondylolisthesis"};
-		
-		String[] Scoliosis = {"scoliosis", "levoscoliosis", "curvature", "scoliotic",
-		"spine\\s*tilts"};
 
+		// Any osteophytes, including anterior column osteophytes
 		String[] AnyOsteophyte = {"osteophyte","syndesmpohyte"};
 		AnyOsteophyte = ArrayUtils.addAll(AnyOsteophyte, OsteophyteAnteriorColumn);
-		
-		String[] AnyDegeneration = {"degeneration"};
-		AnyDegeneration = ArrayUtils.addAll(AnyDegeneration,DiscDegeneration);
-		AnyDegeneration = ArrayUtils.addAll(AnyDegeneration,FacetDegeneration);
-		
-		//FindingListKeywords.put("Hemangioma", Hemangioma);
-		FindingListKeywords.put("Osteophyte anterior column", OsteophyteAnteriorColumn);
-		FindingListKeywords.put("Spondylosis", Spondylosis); // Jerry email
-		FindingListKeywords.put("Disc Herniation", DiscHerniation); // Jerry email
-		FindingListKeywords.put("Fracture", Fracture);
-		FindingListKeywords.put("Spondylolysis", Spondylolysis);
-		FindingListKeywords.put("Scoliosis", Scoliosis); // Jerry email
-		FindingListKeywords.put("Any Osteophyte", AnyOsteophyte);
-		FindingListKeywords.put("Any Degeneration", AnyDegeneration); // Jerry email
 
-		/*String[] CordCompression = {"cord\\s*(compress|impinge|damage|myelomalacia)",
-				"conus\\s*(compress|impinge|damage|myelomalacia)",
-		"cauda\\s*equina\\s*syndrom",
-		"myelopathy",
-		"spinal\\s*cord\\s*injury"};
-		FindingListKeywords.put("Cord.Compression", CordCompression);*/
+		// ################ THE 9 RARE & SERIOUS FINDINGS ORDERED ALPHABETICALLY #############################
+		// Note: Fracture regular expressions already defined
 
+		String[] AorticAneurysm = {"aaa", "AAA",
+				"abdominal\\s*aortic\\s*aneurysm",
+				"aortic\\s*aneurysm","aneurysm(\\s*\\w*){1,4}aorta",
+				"aortic\\s*aneurys\\w*\\s*enlargement","enlargement(\\s*\\w*){1,4}aorta",
+				"aortic\\s*dilatation","dilatation(\\s*\\w*){1,4}aorta",
+				"aortic\\s*dilation", "dilation(\\s*\\w*){1,4}aorta",
+				"borderline\\s*aaa",
+		"ectasia"};
+
+		String[] CaudaEquinaCompression = {
+				"cauda\\s*equina\\s*compress","compression(\\s*\\w*){1,4}(cauda\\s*equina)",
+				"cauda\\s*equina\\s*compromise","compromise(\\s*\\w*){1,4}(cauda\\s*equina)",
+				"cauda\\s*equina\\s*syndrome"
+		};
+
+		String[] CordCompression = {
+				"(cord|conus|syrinx)\\s*compression", "compression(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*damage", "damage(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*effacem", "effac\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*imping", "imping\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*indent", "indent\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*injury", "injury\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*deform", "deform\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*obliteration", "obliteration\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*flat", "flat\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*indentation", "indent\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)"};
+
+		String[] CordSignalAbnormality = {
+				"(cord|conus|syrinx)\\s*abnormal\\s*signal", "abnormal\\s*signal(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*high\\s*signal", "high\\s*signal(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*high\\s*t.?(1|2)", "high\\s*t.?(1|2)(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*hyperintensity", "hyperintensity(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*increased\\s*intensity", "increased\\s*intensity(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*low\\s*t.?(1|2)", "low\\s*t.?(1|2)(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*signal\\s*loss", "signal\\s*loss(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*decreas\\w*\\s*t.?(1|2)", "decreas\\w*\\s*t.?(1|2)(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*flat", "flat\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)",
+				"(cord|conus|syrinx)\\s*indentation", "indent\\w*(\\s*\\w*){1,4}(cord|conus|syrinx)"};
+
+		String[] ExtraSpinalMalignancy = {
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*cancer", "cancer(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*cyst", "cyst(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*mass", "mass(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*(destruct\\w*\\s*bony\\s*lesion)", "(destruct\\w*\\s*bony\\s*lesion)(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"destructive\\s*process\\s*not\\s*excluded",
+				"diffuse\\s*marrow\\s*replacing\\s*process",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*(lytic\\s*lesion)", "(lytic\\s*lesion)(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*(malignan)", "(malignan)(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*metastasis", "metastasis(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*metastasize", "metastasize(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*metastases", "metastases(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*mets\\s", "mets\\s(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*moth.?eaten", "moth.?eaten(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*neoplasm", "neoplasm(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*(pathologic\\s*fracture)", "(pathologic\\s*fracture)(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*plasmacytoma", "plasmacytoma(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)",
+				"questionable\\s*well\\s*demarcated\\s*lucent\\s*area", 
+				"(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)\\s*tumor", "tumor(\\s*\\w*){1,4}(adrenal|gastrointestinal|gi|kidney|renal|liver|hepatic|pancreatic|prostate|pulmonary|renal|necrotic|lymphadenopathy)"
+
+		};
+
+		String[] Infection = {"abscess",
+				"arachnoiditis",
+				"discitis",
+				"diskitis",
+				"infectio",
+				"osteomyelitis",
+				"phlegmon",
+		"fluid\\s*collection"};
+
+		String[] SpinalMalignancy = {
+				"(bone|cord|spin|vertebra)\\s*cancer", "cancer(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"(bone|cord|spin|vertebra)\\s*cyst", "cyst(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"(bone|cord|spin|vertebra)\\s*mass", "mass(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"(bone|cord|spin|vertebra)\\s*(destruct\\w*\\s*bony\\s*lesion)", "(destruct\\w*\\s*bony\\s*lesion)(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"destructive\\s*process\\s*not\\s*excluded",
+				"diffuse\\s*marrow\\s*replacing\\s*process",
+				"(bone|cord|spin|vertebra)\\s*(lytic\\s*lesion)", "(lytic\\s*lesion)(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"(bone|cord|spin|vertebra)\\s*(malignan)", "(malignan)(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"(bone|cord|spin|vertebra)\\s*metastasis", "metastasis(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"(bone|cord|spin|vertebra)\\s*metastasize", "metastasize(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"(bone|cord|spin|vertebra)\\s*metastases", "metastases(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"(bone|cord|spin|vertebra)\\s*mets\\s", "mets\\s(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"(bone|cord|spin|vertebra)\\s*moth.?eaten", "moth.?eaten(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"(bone|cord|spin|vertebra)\\s*neoplasm", "neoplasm(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"(bone|cord|spin|vertebra)\\s*(pathologic\\s*fracture)", "(pathologic\\s*fracture)(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"(bone|cord|spin|vertebra)\\s*plasmacytoma", "plasmacytoma(\\s*\\w*){1,4}(bone|cord|spin|vertebra)",
+				"questionable\\s*well\\s*demarcated\\s*lucent\\s*area", 
+				"(bone|cord|spin|vertebra)\\s*tumor", "tumor(\\s*\\w*){1,4}(bone|cord|spin|vertebra)"
+
+		};
+
+		String[] Spondyloarthropathy = {"ankylosing\\s*spondylitis",
+				"ankylosis(\\s*\\w*){1,4}sacroiliac\\s*joints",
+				"arthropathy(\\s*\\w*){1,4}(inflammatory\\s*bowel\\s*disease|ibd)",
+				"reactive\\s*arthritis",
+				"reiter.?s\\s*syndrome",
+				"sacroiliitis",
+				"spondyloarthropathy",
+		"spondyloarthritis"};
+
+		String[] PositiveAlert = {"flagged\\s*as\\s*abnormal",
+				"annotated\\s*as\\s*abnormal",
+				"designated\\s*as\\s*abnormal",
+				"POSITIVE\\s*ALERT",
+		"positive\\s*alert"};
+
+		// ##################################################################################
+		// ################ Add the findings into dictionary ###########
+		// Deformities
+		FindingListKeywords.put("listhesis_grade_1", Listhesis1); // DOC
+		FindingListKeywords.put("listhesis_grade_2", Listhesis2); // DOC
+		FindingListKeywords.put("spondylolisthesis", Spondylolisthesis); // Grade 1, 2, NOS.. // DOC
+		FindingListKeywords.put("scoliosis", Scoliosis); // Jerry email
+
+		// Fracture
+		FindingListKeywords.put("fracture", Fracture);
+		FindingListKeywords.put("spondylosis", Spondylosis);
+
+		// Anterior column
+		FindingListKeywords.put("annular_fissure", AnnularFissure); // DOC
+		FindingListKeywords.put("disc_bulge", DiscBulge); // DOC
+		FindingListKeywords.put("disc_degeneration", DiscDegeneration); // DOC
+		FindingListKeywords.put("disc_desiccation", DiscDesiccation); // DOC
+		FindingListKeywords.put("disc_extrusion", DiscExtrusion); // DOC
+		FindingListKeywords.put("disc_height_loss", DiscHeightLoss); // DOC
+		FindingListKeywords.put("disc_herniation", DiscHerniation); // Jerry email
+		FindingListKeywords.put("disc_protrusion", DiscProtrusion); // DOC
+		FindingListKeywords.put("endplate_edema", EndplateEdema); // DOC
+		FindingListKeywords.put("osteophyte_anterior_column", OsteophyteAnteriorColumn);
+
+		// Posterior column
+		AnyStenosis = ArrayUtils.addAll(AnyStenosis, CentralStenosis);
+		AnyStenosis = ArrayUtils.addAll(AnyStenosis, ForaminalStenosis);
+		AnyStenosis = ArrayUtils.addAll(AnyStenosis, LateralRecessStenosis);
+		FindingListKeywords.put("any_stenosis", AnyStenosis); // Central, LateralRec, Foraminal, or NOS // DOC
+		FindingListKeywords.put("facet_degeneration", FacetDegeneration); // DOC
+
+		// Leg pain
+		FindingListKeywords.put("central_stenosis", CentralStenosis); // DOC
+		FindingListKeywords.put("foraminal_stenosis", ForaminalStenosis); // DOC
+		FindingListKeywords.put("nerve_root_contact", NerveRootContact); // DOC
+		FindingListKeywords.put("nerve_root_displaced_compressed", NerveRootDisplacedCompressed); // DOC
+		FindingListKeywords.put("lateral_recess_stenosis", LateralRecessStenosis); // DOC
+
+		// Nonspecific
+		FindingListKeywords.put("any_degeneration", AnyDegeneration); // Jerry email
+		FindingListKeywords.put("hemangioma", Hemangioma);
+		FindingListKeywords.put("spondylolysis", Spondylolysis);
+		FindingListKeywords.put("any_osteophyte", AnyOsteophyte);
+
+		// ################ Add the Rare & Serious findings into dictionary ###########
+
+		FindingListKeywords.put("aortic_aneurysm", AorticAneurysm);
+		FindingListKeywords.put("cord_compression", CordCompression);
+		FindingListKeywords.put("cauda_equina_compression", CaudaEquinaCompression);
+		FindingListKeywords.put("cord_signal_abnormality", CordSignalAbnormality);
+		FindingListKeywords.put("extra_spinal_malignancy", ExtraSpinalMalignancy);
+		FindingListKeywords.put("infection", Infection);
+		FindingListKeywords.put("spinal_malignancy", SpinalMalignancy);
+		FindingListKeywords.put("spondyloarthropathy", Spondyloarthropathy);
+		FindingListKeywords.put("positive_alert", PositiveAlert);
+		
 		return FindingListKeywords;
 
 	}

@@ -18,8 +18,6 @@ public class Regex {
 
 	// pipeline to process regular expression: REGEX, NEGEX at the section level
 	public void process(String imageid, 
-			String siteID, 
-			String imageTypeID,
 			String text, 
 			String finding, 
 			String[] keywords, 
@@ -29,16 +27,14 @@ public class Regex {
 			String section_of_sentence) throws Exception {
 		
 		if(text == null) text = "NA"; // Turns null to a String
-		
 		BreakIterator splitIntoSentences = BreakIterator.getSentenceInstance();
 		splitIntoSentences.setText(text);
 		int index = 0;
 
 		while (splitIntoSentences.next() != BreakIterator.DONE) {
-			String sentence = text.substring(index, splitIntoSentences.current());
+			String sentence = text.substring(index, splitIntoSentences.current()); // Split to sentence
+			
 			RegexSentenceLevel(imageid, 
-					siteID, 
-					imageTypeID,
 					sentence.toLowerCase(), 
 					finding, 
 					keywords, 
@@ -55,8 +51,6 @@ public class Regex {
 
 	// Method to find REGEX, NEGEX variables at the sentence level
 	private void RegexSentenceLevel(String imageid, 
-			String siteID, 
-			String imageTypeID,
 			String sentence, 
 			String finding, 
 			String[] keywords, 
@@ -69,6 +63,14 @@ public class Regex {
 		String keyword_trigger = " "; // initialize
 
 		ArrayList<String> negexMarkup = new ArrayList<String>();
+		
+		String sentence_without_stopwords = "";
+		// Preprocess text to exclude stopwords
+		for (String s : RuleBasedNLP.fileStopWords){
+			Pattern p = Pattern.compile(" " + s + " ");
+			Matcher m = p.matcher(sentence);
+			sentence_without_stopwords = m.replaceAll(" ");
+		}
 
 		//ConText myContext = new ConText();
 		FastContext fc = new FastContext(RuleBasedNLP.negationPatterns, true);
@@ -76,11 +78,11 @@ public class Regex {
 		for(String keyword : keywords){
 			// find keywords
 			Pattern p = Pattern.compile(keyword);
-			Matcher m = p.matcher(sentence);
+			Matcher m = p.matcher(sentence_without_stopwords);
 			
 			while(m.find()){ // loop through all the found keywords
 				regex = "1";
-				negexMarkup = fc.processContext(sentence,m.start(), m.end(),15);
+				negexMarkup = fc.processContext(sentence, m.start(), m.end(), RuleBasedNLP.MAX_WINDOW);
 						
 				keyword_trigger = keyword;
 				if(negexMarkup.indexOf("negated") != -1) negex = "1"; // keyword is negated
@@ -89,8 +91,6 @@ public class Regex {
 			}
 		
 		List<String> temp = Arrays.asList(imageid,
-				siteID,
-				imageTypeID,
 				finding,
 				sentence,
 				section_of_sentence,

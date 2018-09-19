@@ -6,9 +6,6 @@ import java.util.Map;
 
 public class ProcessReport {
 
-	// Constants for FeatureGenerator class
-	
-	static StopWords sw = new StopWords();
 
 	// Constructor for FeatureGenerator class
 	public ProcessReport() {
@@ -18,8 +15,6 @@ public class ProcessReport {
 	
 	void getRegex(List<List<String>> df,
 			String imageid, 
-			String siteID, 
-			String imageTypeID, 
 			String bodyText,
 			String impressionText, 
 			Map<String, String[]> FindingListKeywords) throws Exception{
@@ -37,8 +32,6 @@ public class ProcessReport {
 					for(int report=1; report<df.get(0).size(); report++){
 						/*Processes body text */
 						rbnlp.process(df.get(headerNames.indexOf(imageid)).get(report),
-								df.get(headerNames.indexOf(siteID)).get(report),
-								df.get(headerNames.indexOf(imageTypeID)).get(report),
 								df.get(headerNames.indexOf(bodyText)).get(report),
 								finding,
 								FindingListKeywords.get(finding),
@@ -49,8 +42,6 @@ public class ProcessReport {
 						
 						/*Processes impression text */					
 						rbnlp.process(df.get(headerNames.indexOf(imageid)).get(report),
-								df.get(headerNames.indexOf(siteID)).get(report),
-								df.get(headerNames.indexOf(imageTypeID)).get(report),
 								df.get(headerNames.indexOf(impressionText)).get(report),
 								finding,
 								FindingListKeywords.get(finding),

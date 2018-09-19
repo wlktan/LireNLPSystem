@@ -829,6 +829,8 @@ non diagnostic|backward|trigger|negated|10
 non diagnostic|forward|termination|negated|10
 none|backward|termination|negated|10
 none|forward|trigger|negated|10
+: None|forward|trigger|negated|10
+: None|backward|termination|negated|10
 nor all|backward|termination|negated|10
 nor all|forward|trigger|negated|10
 nor any|backward|termination|negated|10
