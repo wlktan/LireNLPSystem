@@ -16,62 +16,51 @@
 
 RuleBasedNLP <- function(regex.df.java){
 
-  # Aggregate function from sentence to section
-  PredictSectionRegex <- function(regex){
-    out <- ifelse(max(regex) == 1, 1, 0)
-    return(out)
-  }
-
-  PredictSectionNegex <- function(negex){
-    out <- ifelse(min(negex) == -1, -1, 0)
-    return(out)
-  }
-
-  regex.df.temp <- regex.df.java %>%
-    as.data.frame() %>%
+  regex.df.java <- as.data.frame(regex.df.java) %>%
     mutate_at(c("regex", "negex"), as.character) %>%
-    mutate_at(c("regex", "negex"), as.numeric) %>%
+    mutate_at(c("regex", "negex"), as.numeric)
 
-    ### Section level predictions
+  ###### Data frame of regex & negex variables for input into machine-learning
+  temp <- regex.df.java %>%
     select(-Sentence, -keyword) %>%
-    group_by(Finding, imageid, `Section of sentence`) %>%
-    summarize(regex_section = PredictSectionRegex(regex),
-              negex_section = PredictSectionNegex(negex)) %>%
-    mutate(section_level_prediction = ifelse(regex_section == 1 & negex_section == 0, 1,
-                                             ifelse(regex_section == 1 & negex_section == 1, -1, 0))) %>%
-    select(-regex_section, -negex_section) %>%
+    group_by(Finding, imageid) %>%
+    summarize(report_regex = max(regex),
+              report_negex = max(negex))
 
-    ### Impression trumps body
-    spread(., `Section of sentence`, section_level_prediction) %>%
-    mutate(rules_nlp = ifelse(body == 1 | impression == 1, 1,
-                              ifelse(impression == -1 | (body == -1 & impression == 0), -1,
-                                     0)),
-           report_regex = ifelse(rules_nlp == 1, 1, 0),
-           report_negex = ifelse(rules_nlp == -1, 1, 0)) %>%
-    ungroup() %>%
-    select(Finding, imageid, report_regex, report_negex, rules_nlp)
-
-
-  ### Get regex, negex
-  finding.regex.df <- regex.df.temp %>%
-    select(-report_negex, -rules_nlp) %>%
+  rgx <- temp %>%
+    select(-report_negex) %>%
     group_by(imageid) %>%
     spread(., Finding, report_regex) %>%
-    ungroup()
+  ungroup()
 
-  finding.negex.df <- regex.df.temp %>%
-    select(-report_regex, -rules_nlp) %>%
+  ngx <- temp %>%
+    select(-report_regex) %>%
     group_by(imageid) %>%
     spread(., Finding, report_negex) %>%
-    ungroup()
+  ungroup()
 
-  regex.df.wide <- finding.regex.df %>%
-    left_join(finding.negex.df, by = c("imageid"),
+  regex.df.wide <- rgx %>%
+    left_join(ngx, by = c("imageid"),
               suffix = c("_regex", "_negex"))
 
-  ### Rules NLP DF
-  rules.nlp.df <- regex.df.temp %>%
-    select(-report_regex, -report_negex) %>%
+  ###### Rules NLP aggregation
+  rbnlp.tb <- data.frame(body = c(1,1,1,0,0,0,-1,-1,-1),
+                         impression = c(1,0,-1,1,0,-1,1,0,-1),
+                         rules_nlp = c(1,1,-1,1,0,-1,1,-1,-1))
+
+  rules.nlp.df <- regex.df.java %>%
+    ### Section level predictions
+    mutate(sentence_level_prediction = ifelse(regex == 1 & negex == 0, 1,
+                                              ifelse(regex == 1 & negex == 1, -1, 0))) %>%
+    select(-Sentence, -keyword, -regex, -negex) %>%
+    group_by(Finding, imageid, `Section of sentence`) %>%
+    summarize(section_level_prediction = ifelse(max(sentence_level_prediction) == 1, 1,
+                                                ifelse(min(sentence_level_prediction) == -1, -1, 0))) %>%
+    ### Impression trumps body
+    spread(., `Section of sentence`, section_level_prediction) %>%
+    ungroup() %>%
+    left_join(rbnlp.tb, by = c("body", "impression")) %>%
+    select(Finding, imageid, rules_nlp) %>%
     mutate(Finding = paste0(Finding, "_rules")) %>%
     group_by(imageid) %>%
     spread(., Finding, rules_nlp) %>%

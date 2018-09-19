@@ -12,21 +12,25 @@ devtools::install_github("wlktan/LireNLPSystem")
 library(LireNLPSystem)
 ```
 
-You should also have the following installed:
+For the demo, you should also have the following installed:
 ```{r}
-install.packages("rJava")
+install.packages("readr")
 install.packages("dplyr")
 install.packages("tidyr")
-install.packages("quanteda")
 install.packages("caret")
-install.packages("xlsx")
+
+library(LireNLPSystem)
+library(readr)
+library(dplyr)
+library(tidyr)
+library(caret)
 
 ```
 ### About
 
 See project description here: https://docs.google.com/a/uw.edu/document/d/1O52W7TtHBVT8kDHx6PuBfVOKpJGo9FKp-T2bESbyrmM/edit?usp=sharing
 
-WARNING: This package has not been fully tested; use at your own risk. If you try it out with examples outside of the tutorial, please also be mindful that this package has NOT been optimized for speed (highly recommend you chunk your data sets into smaller subsets - like 25 rows or so).
+More to come.
 
 ### Functions overview
 
@@ -38,20 +42,33 @@ There are five main R functions in this package:
 * CreateTextFeatures
 * MachineLearningNLP
 
-which together defines a workflow/pipeline for getting NLP predictions of radiographic findings from radiology text reports.
+These functions together creates the workflow for the NLP system for the LIRE project. The NLP system includes the 26 findings described in Tan et. all (Academic Radiology, 2018), as well as 10 additional ``rare and serious" findings.
 
 #### SectionSegmentation
-Takes in a data frame and outputs the sectioned report text.
 
-Additional features to be developed:
-* Allow user to specify the name of the column to be segmented into sections (right now it uses imagereporttext).
-* Test edge cases to ensure regular expressions are splitting up sections correctly.
-* Throws error messages if user enters incorrect input.
+This function takes in a data frame, and segments the \textt{imagereporttext} column into the following sections:
 
-Example usage (these reports are fake data).
+* History
+* Exam
+* Comparison
+* Technique
+* Body
+* Impression
+* Datetime
+
+Some of these sections may be empty. This code is developed and validated ONLY for the four LIRE sites:
+
+* site = 1: Kaiser Permanente Washington (previously Group Health)
+* site = 2: Kaiser Permanente Northen California
+* site = 3: Henry Ford
+* site = 4: Mayo Clinic
+
+The default is \texttt{site = 2}. If you are NOT using LIRE reports, the algorithm may be inaccurate.
+
+Example usage:
 ```{r section_segmentation}
-library(LireNLPSystem)
 
+### This is fake data.
 text.df <- data.frame(patientID = c("W231", "W2242", "W452", "5235"),
                            examID = c("631182", "1226", "2090", "1939"),
                            siteID = c(2,2,2,2),
@@ -73,16 +90,29 @@ View(segmented.reports)
 ```
 
 #### RuleBasedNLP_JavaSentence
-Takes in segmented reports data frame and runs JAR file to obtain sentence-by-sentence rules-based NLP predictions.
 
-Additional features to be developed:
-* Additional text pre-processing
+This function takes in a data frame, with at the minimum these columns:
+
+* \texttt{imageid}: Unique identifier of report
+* \texttt{bodyText}: Column of text of report body
+* \texttt{impressionText}: Column of text of report impression
+* \texttt{findings_longstring}: String of findings separated with \texttt{;}, for example \texttt{disc_degeneration;endplate_edema}. Full finding list available in the lire_finding_matrix.xlsx file on GitHub page.
+
+This function assumes reports are sectioned into body and impression. To use this function if only one column of report text is available, please create an extra column for impression and fill it with \texttt{NA}. 
+
+The function passes the data frame to the RuleBasedNLP.jar file in \texttt{inst/java}, and outputs sentence level prediction of the following:
+
+* Sentence: The exact sentence from report.
+* Section of sentence: Which section (body or impression) sentence is from.
+* regex: If a related keyword to the finding is present.
+* negex: If the keyword is negated.
+* keyword: The regular expression that triggered the algorithm.
+
+Note that negex can only be 1 if regex is 1.
 
 Example usage:
 ```{r rb_java}
-### Create unique identifier for each report 
-### For LIRE data, it is patientID + examID
-
+### Create unique identifier for each report: For LIRE data, it is patientID + examID
 segmented.reports <- segmented.reports %>%
   dplyr::mutate(imageid = paste(patientID, examID, sep = "_"))
 
@@ -98,66 +128,89 @@ finding.list <- c("spondylolisthesis",
                       
 regex.df.java <- RuleBasedNLP_JavaSentence(segmented.reports,
                                imageid = "imageid",
-                               bodyText = "preprocessed_findings",
-                               impressionText = "preprocessed_impression",
+                               bodyText = "body",
+                               impressionText = "impression",
                                findings_longstring = paste(finding.list,collapse = ";")
                                )
 ```
 
 #### RuleBasedNLP
-Takes in regex.df.java data frame and aggregates the regex and negex predictions for every report and finding, according to the following logic:  
-* If there is at least one non-negated sentence in a section (body or impression), regex = 1 in the section.
-* If there is conflict between body and impression, go with body.
 
-Additional features to be developed:
-* Additional text pre-processing
+This function takes in the sentence-by-sentence output of the \texttt{RuleBasedNLP_JavaSentence} function, and aggregates over all sentences to get a report level prediction. For every finding, the logic is as follows:
 
+* Report level prediction: See lookup table below.
+* Section level prediction:
+  + 1, if at least one sentence with a non-negated keyword.
+  + -1, if all keywords are negated.
+  + 0, otherwise.
+  
 Example usage:
-
 ```{r rb}
+
+rbnlp.tb <- data.frame(body = c(1,1,1,0,0,0,-1,-1,-1),
+impression = c(1,0,-1,1,0,-1,1,0,-1),
+rules_nlp = c(1,1,-1,1,0,-1,1,-1,-1))
+
+View(rbnlp.tb)                       
 regex.df.list <- RuleBasedNLP(regex.df.java) 
 
+# This is the ``wide" data frame to be used in the machine-learning predictions
 regex.df.wide <- regex.df.list$regex.df.wide
+
+# This is the data frame of rules NLP prediction
 rules.nlp.df <- regex.df.list$rules.nlp.df
 
 ```
 
 #### CreateTextFeatures
 
-Takes as input the segmented reports data frame, and outputs a data frame with text-based predictors. 
+This function takes a data frame with at the minimum these columns:
 
-Additional features to be developed:
-* Test for features compatibility with developed models yet (e.g. fuzzy matching)
+* \texttt{imageid}: Unique identifier of report
+* \texttt{text.cols}: Columns of text of report body
+
+It will create binary indicator of N-gram (unigrams, bigrams, trigrams) features separately for each column of text. However, to pre-process data so that it is compatible with the machine-learning feature weights, \texttt{text.cols} should be a vector of length 2 corresponding to the body and impression columns.
+
+It will return a data frame based on the document-feature matrix (dfm) object: rows are reports and columns are features.
 
 Example usage:
 ```{r create_text_features}
 unigrams <- CreateTextFeatures(as.data.frame(segmented.reports),  
                                id_col = "imageid", 
-                               text.cols = c("preprocessed_findings","preprocessed_impression"),
+                               text.cols = c("body","impression"),
                                n_gram_length = 1)
 bigrams <- CreateTextFeatures(as.data.frame(segmented.reports),  
                                id_col = "imageid", 
-                               text.cols = c("preprocessed_findings","preprocessed_impression"),
+                               text.cols = c("body","impression"),
                                n_gram_length = 2)
 trigrams <- CreateTextFeatures(as.data.frame(segmented.reports),  
                                id_col = "imageid", 
-                               text.cols = c("preprocessed_findings","preprocessed_impression"),
+                               text.cols = c("body","impression"),
                                n_gram_length = 3)
 
 text.dfm <- unigrams %>%
   inner_join(bigrams, by = "imageid") %>%
   inner_join(trigrams, by = "imageid")
-colnames(text.dfm) <- gsub("PREPROCESSED_FINDINGS", "BODY", colnames(text.dfm))
-colnames(text.dfm) <- gsub("PREPROCESSED_IMPRESSION", "IMP", colnames(text.dfm))
+
 ```
 
 #### MachineLearningNLP
 
-Takes as input the text-based predictors and regex/negex predictors, outputs Machine-Learning NLP predictions
+This function takes in features and outputs machine-learning NLP predictions. Three types of features are required:
+
+* N-grams in section: This can be obtained using the \texttt{CreateTextFeatures} function.
+* Report level regex and negex: This can be obtained using the \texttt{RuleBasedNLP} function (the .$regex.df.wide data frame).
+* LIRE study site and imaging modality: These need to be formatted as indicator matrices (see example below).
+
+At the minimum, report level regex/negex and N-grams in section are required. The algorithm will still run if study site and imaging modality information is not available, however the accuracy is unknown. Since this algorithm was developed specific for reports from LIRE study sites, please use it on other report types with awareness.
 
 Example usage:
 ```{r ml}
+### This is the same text.dfm in the demo.
+### Need to make sure that the correct prefixes BODY and IMP are used!
+colnames(text.dfm) <- gsub("IMPRESSION", "IMP", colnames(text.dfm))
 
+#### This series of code transform numeric site and imageTypeID (modality) into indicator matrices
 ftr <- segmented.reports %>% 
   dplyr::select(imageid, siteID, imageTypeID) %>%
   dplyr::rename(site = siteID,
