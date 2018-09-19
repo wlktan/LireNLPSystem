@@ -155,10 +155,6 @@ colnames(text.dfm) <- gsub("PREPROCESSED_IMPRESSION", "IMP", colnames(text.dfm))
 
 Takes as input the text-based predictors and regex/negex predictors, outputs Machine-Learning NLP predictions
 
-Additional features to be developed:
-* Fix bug to read in model_coef.xlsx file from the R package properly, or alternative ways to load data.
-
-
 Example usage:
 ```{r ml}
 
@@ -178,9 +174,12 @@ text.dfm <- text.dfm %>%
   left_join(site.and.modality, by = "imageid")
 
 ### Apply machine-learning model tuned parameters
+data(ml_feature_weights)
+
 ml.nlp.df <- MachineLearningNLP(finding.list, 
                          text.dfm, 
                          regex.df.wide,
+                         ml_feature_weights,
                          grouping_var = "imageid")
                             
 ### Combine rules and ML into single data.frame
@@ -205,4 +204,5 @@ View(nlp.df)
   + Re-writing code for generalizability.
 
 9/19/2017: 
-* Updated functions and documentation
+* Easy loading of ML model coefficients
+

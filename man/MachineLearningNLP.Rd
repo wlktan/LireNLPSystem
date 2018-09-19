@@ -5,10 +5,16 @@
 \title{Apply machine-learning NLP for the given list of findings}
 \usage{
 MachineLearningNLP(finding.list, text.dfm, regex.df.wide,
-  grouping_var = "imageid")
+  ml_feature_weights, grouping_var = "imageid")
 }
 \arguments{
 \item{finding.list}{The vector of string of findings}
+
+\item{text.dfm}{DFM object of N-grams}
+
+\item{regex.df.wide}{Regex, negex features}
+
+\item{ml_feature_weights}{Data frame of feature names and feature weights}
 
 \item{grouping_var}{Unique identifier of report}
 }
