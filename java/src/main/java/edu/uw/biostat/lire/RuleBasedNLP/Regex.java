@@ -98,7 +98,7 @@ public class Regex {
 				negex,
 				keyword_trigger);
 		
-		RuleBasedNLP.errorArray.add(temp);
+		RuleBasedNLP.outputArray.add(temp);
 		
 	}
 

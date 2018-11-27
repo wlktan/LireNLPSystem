@@ -124,9 +124,39 @@ $(document).ready(function () {
 </div>
 
 
-<div id="installation" class="section level3">
-<h3>Installation</h3>
-<p>To install, run the following code: <code>{r installation} install.packages(&quot;devtools&quot;) library(&quot;devtools&quot;) devtools::install_github(&quot;wlktan/LireNLPSystem&quot;) library(LireNLPSystem)</code></p>
+<div id="table-of-contents" class="section level2">
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#Installation">Installation</a>
+<ul>
+<li><a href="#Troubleshoot">Troubleshoot: Configuring rJava on Mac</a></li>
+</ul></li>
+<li><a href="#Overview">Overview</a></li>
+<li><a href="#MainR">Main R functions</a>
+<ul>
+<li><a href="#SectionSegmentation">SectionSegmentation</a></li>
+<li><a href="#RuleBasedNLP_JavaSentence">RuleBasedNLP_JavaSentence</a></li>
+<li><a href="#RuleBasedNLP">RuleBasedNLP</a></li>
+<li><a href="#CreateTextFeatures">CreateTextFeatures</a></li>
+<li><a href="#MachineLearningNLP">MachineLearningNLP</a></li>
+</ul></li>
+<li><a href="#AdvancedUsage">Advanced usage</a>
+<ul>
+<li><a href="#ModifyJavaCode">Modifying source Java code</a></li>
+<li><a href="#UpdateRPackage">Updating R package</a></li>
+<li><a href="#UserMLWeights">User-supplied feature weights</a></li>
+</ul></li>
+<li><a href="#GitHubStructure">GitHub folder structure</a></li>
+</ul>
+<p><a name="Installation"></a></p>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>To install, run the following code:</p>
+<pre class="{r}"><code>install.packages(&quot;devtools&quot;)
+library(&quot;devtools&quot;)
+devtools::install_github(&quot;wlktan/LireNLPSystem&quot;)
+library(LireNLPSystem)</code></pre>
 <p>For the demo, you should also have the following installed:</p>
 <pre class="{r}"><code>install.packages(&quot;readr&quot;)
 install.packages(&quot;dplyr&quot;)
@@ -139,62 +169,86 @@ library(dplyr)
 library(tidyr)
 library(caret)
 </code></pre>
+<p><a name="Troubleshoot"></a></p>
+<div id="troubleshoot-configuring-rjava-on-mac" class="section level3">
+<h3>Troubleshoot: Configuring rJava on Mac</h3>
+<p>Installation should be straight-forward; however if you are using MacOS the dependency package rJava could throw errors. This is because R needs to know where Java is on the machine. In that case open Terminal and do the following which is adapted from <a href="https://github.com/snowflakedb/dplyr-snowflakedb/wiki/Configuring-R-rJava-RJDBC-on-Mac-OS-X">this source:</a></p>
+<p>First, install Xcode (if not already installed):</p>
+<pre><code>xcode-select --install</code></pre>
+<p>Then install Java8 (newer versions may exist but this should be sufficient):</p>
+<pre><code>curl -#ROL -b &quot;oraclelicense=a&quot;  http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jdk-8u60-macosx-x64.dmg
+open jdk-8u60-macosx-x64.dmg</code></pre>
+<p>Now, we need to tell R to use the installed Java 8 as <code>JAVA_HOME</code></p>
+<pre><code>R CMD javareconf</code></pre>
+<p>Finally, install <code>rJava</code> from source and compile it against the Java 8 JDK.</p>
+<pre><code>R --quiet -e 'install.packages(&quot;rJava&quot;, type=&quot;source&quot;, repos=&quot;http://cran.us.r-project.org&quot;)'</code></pre>
+<p>If you run into an error try:</p>
+<pre><code>curl -#ROL https://www.rforge.net/rJava/snapshot/rJava_0.9-8.tar.gz
+R CMD INSTALL rJava_0.9-8.tar.gz</code></pre>
+<p>You may also try searching for “configuring rJava on Mac” on the internet.</p>
+<p><a name="Overview"></a></p>
 </div>
-<div id="about" class="section level3">
-<h3>About</h3>
-<p>See project description here: <a href="https://docs.google.com/a/uw.edu/document/d/1O52W7TtHBVT8kDHx6PuBfVOKpJGo9FKp-T2bESbyrmM/edit?usp=sharing" class="uri">https://docs.google.com/a/uw.edu/document/d/1O52W7TtHBVT8kDHx6PuBfVOKpJGo9FKp-T2bESbyrmM/edit?usp=sharing</a></p>
-<p>More to come.</p>
 </div>
-<div id="functions-overview" class="section level3">
-<h3>Functions overview</h3>
+<div id="overview" class="section level2">
+<h2>Overview</h2>
 <p>There are five main R functions in this package:</p>
 <ul>
-<li>SectionSegmentation</li>
-<li>RuleBasedNLP_JavaSentence</li>
-<li>RuleBasedNLP</li>
-<li>CreateTextFeatures</li>
-<li>MachineLearningNLP</li>
+<li><a href="#SectionSegmentation">SectionSegmentation</a></li>
+<li><a href="#RuleBasedNLP_JavaSentence">RuleBasedNLP_JavaSentence</a></li>
+<li><a href="#RuleBasedNLP">RuleBasedNLP</a></li>
+<li><a href="#CreateTextFeatures">CreateTextFeatures</a></li>
+<li><a href="#MachineLearningNLP">MachineLearningNLP</a></li>
 </ul>
-<p>These functions together creates the workflow for the NLP system for the LIRE project. The NLP system includes the 26 findings described in Tan et. all (Academic Radiology, 2018), as well as 10 additional ``rare and serious&quot; findings.</p>
-<div id="sectionsegmentation" class="section level4">
-<h4>SectionSegmentation</h4>
-<p>This function takes in a data frame, and segments the  column into the following sections:</p>
-<ul>
-<li>History</li>
-<li>Exam</li>
-<li>Comparison</li>
-<li>Technique</li>
-<li>Body</li>
-<li>Impression</li>
-<li>Datetime</li>
-</ul>
-<p>Some of these sections may be empty. This code is developed and validated ONLY for the four LIRE sites:</p>
+<p>These functions together creates the workflow for the NLP system for the LIRE project. The NLP system includes the 26 findings described in Tan et. all (Academic Radiology, 2018), as well as 10 additional <code>rare and serious</code> findings. Please see File <code>lire_finding_matrix.xlsx</code> file, Sheet <code>finding_matrix</code> Column <code>finding_string</code> for the complete list.</p>
+<p><a name="MainR"></a></p>
+</div>
+<div id="main-r-functions" class="section level2">
+<h2>Main R functions</h2>
+<p><a name="SectionSegmentation"></a></p>
+<div id="sectionsegmentation" class="section level3">
+<h3>SectionSegmentation</h3>
+<p>This function takes in a data frame, and segments the <code>imagereporttext</code> column into the following sections: <code>History</code>, <code>Exam</code>, <code>Comparison</code>, <code>Technique</code>, <code>Body</code>, <code>Impression</code>, <code>Datetime</code>. Some of these sections may be empty. This code is developed and validated ONLY for the four LIRE sites:</p>
 <ul>
 <li>site = 1: Kaiser Permanente Washington (previously Group Health)</li>
 <li>site = 2: Kaiser Permanente Northen California</li>
 <li>site = 3: Henry Ford</li>
 <li>site = 4: Mayo Clinic</li>
 </ul>
-<p>The default is . If you are NOT using LIRE reports, the algorithm may be inaccurate.</p>
-<p>Example usage: ```{r section_segmentation}</p>
+<p>The default is <code>site = 2</code>. If you are NOT using LIRE reports, the algorithm may be inaccurate.</p>
+<p>Example usage:</p>
+<pre class="{r}"><code>
+### This is fake data.
+text.df &lt;- data.frame(patientID = c(&quot;W231&quot;, &quot;W2242&quot;, &quot;W452&quot;, &quot;5235&quot;),
+                           examID = c(&quot;631182&quot;, &quot;1226&quot;, &quot;2090&quot;, &quot;1939&quot;),
+                           siteID = c(2,2,2,2),
+                           imageTypeID = c(1,3,1,3),
+                           imagereporttext = c(&quot;** HISTORY **: Progressive radicular symptoms for 8 weeks Comparison study: None 
+                                               ** FINDINGS **: Dextroconvex scoliosis with apex at L3. 
+                                               ** IMPRESSION **: Scoliosis present.&quot;,
+                                               &quot;** FINDINGS **: Disk height loss is present focally. 
+                                               ** IMPRESSION **:  Mild to moderate broad-based disc bulge.&quot;,
+                                               &quot;** FINDINGS **: canal stenosis and mild narrowing of the left latera. 
+                                               ** IMPRESSION **: mild bilateral foraminal narrowing.&quot;,
+                                               &quot;** FINDINGS **: Disc unremarkable. 
+                                               ** IMPRESSION **:  Foraminal stenosis.&quot;))
+
+
+segmented.reports &lt;- SectionSegmentation(text.df, site = 2)
+View(segmented.reports)
+</code></pre>
+<p><a name="RuleBasedNLP_JavaSentence"></a></p>
 </div>
-</div>
-<div id="this-is-fake-data." class="section level3">
-<h3>This is fake data.</h3>
-<p>text.df &lt;- data.frame(patientID = c(“W231”, “W2242”, “W452”, “5235”), examID = c(“631182”, “1226”, “2090”, “1939”), siteID = c(2,2,2,2), imageTypeID = c(1,3,1,3), imagereporttext = c(“** HISTORY <strong>: Progressive radicular symptoms for 8 weeks Comparison study: None </strong> FINDINGS <strong>: Dextroconvex scoliosis with apex at L3. </strong> IMPRESSION <strong>: Scoliosis present.“,”</strong> FINDINGS <strong>: Disk height loss is present focally. </strong> IMPRESSION <strong>: Mild to moderate broad-based disc bulge.“,”</strong> FINDINGS <strong>: canal stenosis and mild narrowing of the left latera. </strong> IMPRESSION <strong>: mild bilateral foraminal narrowing.“,”</strong> FINDINGS <strong>: Disc unremarkable. </strong> IMPRESSION **: Foraminal stenosis.“))</p>
-<p>segmented.reports &lt;- SectionSegmentation(text.df, site = 2) View(segmented.reports)</p>
-<p>```</p>
-<div id="rulebasednlp_javasentence" class="section level4">
-<h4>RuleBasedNLP_JavaSentence</h4>
+<div id="rulebasednlp_javasentence" class="section level3">
+<h3>RuleBasedNLP_JavaSentence</h3>
 <p>This function takes in a data frame, with at the minimum these columns:</p>
 <ul>
-<li>: Unique identifier of report</li>
-<li>: Column of text of report body</li>
-<li>: Column of text of report impression</li>
-<li>: String of findings separated with , for example . Full finding list available in the lire_finding_matrix.xlsx file on GitHub page.</li>
+<li><code>imageid</code>: Unique identifier of report</li>
+<li><code>bodyText</code>: Column of text of report body</li>
+<li><code>impressionText</code>: Column of text of report impression</li>
+<li><code>findings_longstring</code>: String of findings separated with ;, for example disc_degeneration;endplate_edema. Full finding list available in the <code>lire_finding_matrix.xlsx</code> file on GitHub page.</li>
 </ul>
-<p>This function assumes reports are sectioned into body and impression. To use this function if only one column of report text is available, please create an extra column for impression and fill it with .</p>
-<p>The function passes the data frame to the RuleBasedNLP.jar file in , and outputs sentence level prediction of the following:</p>
+<p>This function assumes reports are sectioned into body and impression. To use this function if only one column of report text is available, please create an extra column for impression and fill it with <code>NA</code>.</p>
+<p>The function passes the data frame to the <code>RuleBasedNLP.jar</code> file in <code>inst/java</code>, and outputs sentence level prediction of the following:</p>
 <ul>
 <li>Sentence: The exact sentence from report.</li>
 <li>Section of sentence: Which section (body or impression) sentence is from.</li>
@@ -203,87 +257,230 @@ library(caret)
 <li>keyword: The regular expression that triggered the algorithm.</li>
 </ul>
 <p>Note that negex can only be 1 if regex is 1.</p>
-<p>Example usage: ```{r rb_java} ### Create unique identifier for each report: For LIRE data, it is patientID + examID segmented.reports &lt;- segmented.reports %&gt;% dplyr::mutate(imageid = paste(patientID, examID, sep = “_“))</p>
+<p>Example usage:</p>
+<pre class="{r}"><code>### Create unique identifier for each report: For LIRE data, it is patientID + examID
+segmented.reports &lt;- segmented.reports %&gt;%
+  dplyr::mutate(imageid = paste(patientID, examID, sep = &quot;_&quot;))
+
+### This is the list of LIRE findings
+finding.list &lt;- c(&quot;spondylolisthesis&quot;,
+                  &quot;annular_fissure&quot;,
+                  &quot;disc_bulge&quot;,
+                  &quot;disc_degeneration&quot;,
+                  &quot;disc_desiccation&quot;,
+                  &quot;disc_height_loss&quot;,
+                  &quot;disc_protrusion&quot;,
+                  &quot;facet_degeneration&quot;)
+                      
+regex.df.java &lt;- RuleBasedNLP_JavaSentence(segmented.reports,
+                               imageid = &quot;imageid&quot;,
+                               bodyText = &quot;body&quot;,
+                               impressionText = &quot;impression&quot;,
+                               findings_longstring = paste(finding.list,collapse = &quot;;&quot;)
+                               )</code></pre>
+<p><a name="RuleBasedNLP"></a></p>
 </div>
-</div>
-<div id="this-is-the-list-of-lire-findings" class="section level3">
-<h3>This is the list of LIRE findings</h3>
-<p>finding.list &lt;- c(“spondylolisthesis”, “annular_fissure”, “disc_bulge”, “disc_degeneration”, “disc_desiccation”, “disc_height_loss”, “disc_protrusion”, “facet_degeneration”)</p>
-<p>regex.df.java &lt;- RuleBasedNLP_JavaSentence(segmented.reports, imageid = “imageid”, bodyText = “body”, impressionText = “impression”, findings_longstring = paste(finding.list,collapse = “;”) ) ```</p>
-<div id="rulebasednlp" class="section level4">
-<h4>RuleBasedNLP</h4>
-<p>This function takes in the sentence-by-sentence output of the  function, and aggregates over all sentences to get a report level prediction. For every finding, the logic is as follows:</p>
+<div id="rulebasednlp" class="section level3">
+<h3>RuleBasedNLP</h3>
+<p>This function takes in the sentence-by-sentence output of the <code>RuleBasedNLP_JavaSentence</code> function, and aggregates over all sentences to get a report level prediction. For every finding, the logic is as follows:</p>
 <ul>
 <li>Report level prediction: See lookup table below.</li>
-<li>Section level prediction:</li>
+<li>Section level prediction:
+<ul>
 <li>1, if at least one sentence with a non-negated keyword.</li>
 <li>-1, if all keywords are negated.</li>
 <li>0, otherwise.</li>
+</ul></li>
 </ul>
-<p>Example usage: ```{r rb}</p>
-<p>rbnlp.tb &lt;- data.frame(body = c(1,1,1,0,0,0,-1,-1,-1), impression = c(1,0,-1,1,0,-1,1,0,-1), rules_nlp = c(1,1,-1,1,0,-1,1,-1,-1))</p>
-<p>View(rbnlp.tb)<br />
-regex.df.list &lt;- RuleBasedNLP(regex.df.java)</p>
+<p>Example usage:</p>
+<pre class="{r}"><code>
+rbnlp.tb &lt;- data.frame(body = c(1,1,1,0,0,0,-1,-1,-1),
+impression = c(1,0,-1,1,0,-1,1,0,-1),
+rules_nlp = c(1,1,-1,1,0,-1,1,-1,-1))
+
+View(rbnlp.tb)                       
+regex.df.list &lt;- RuleBasedNLP(regex.df.java) 
+
+# This is the &quot;wide&quot; data frame to be used in the machine-learning predictions
+regex.df.wide &lt;- regex.df.list$regex.df.wide
+
+# This is the data frame of rules NLP prediction
+rules.nlp.df &lt;- regex.df.list$rules.nlp.df
+</code></pre>
+<p><a name="CreateTextFeatures"></a></p>
 </div>
-</div>
-<div id="this-is-the-wide-data-frame-to-be-used-in-the-machine-learning-predictions" class="section level1">
-<h1>This is the ``wide&quot; data frame to be used in the machine-learning predictions</h1>
-<p>regex.df.wide &lt;- regex.df.list$regex.df.wide</p>
-</div>
-<div id="this-is-the-data-frame-of-rules-nlp-prediction" class="section level1">
-<h1>This is the data frame of rules NLP prediction</h1>
-<p>rules.nlp.df &lt;- regex.df.list$rules.nlp.df</p>
-<p>```</p>
-<div id="createtextfeatures" class="section level4">
-<h4>CreateTextFeatures</h4>
+<div id="createtextfeatures" class="section level3">
+<h3>CreateTextFeatures</h3>
 <p>This function takes a data frame with at the minimum these columns:</p>
 <ul>
-<li>: Unique identifier of report</li>
-<li>: Columns of text of report body</li>
+<li><code>imageid</code>: Unique identifier of report</li>
+<li><code>text.cols</code>: Columns of text of report body</li>
 </ul>
-<p>It will create binary indicator of N-gram (unigrams, bigrams, trigrams) features separately for each column of text. However, to pre-process data so that it is compatible with the machine-learning feature weights,  should be a vector of length 2 corresponding to the body and impression columns.</p>
+<p>It will create binary indicator of N-gram (unigrams, bigrams, trigrams) features separately for each column of text. However, to pre-process data so that it is compatible with the machine-learning feature weights, <code>text.cols</code> should be a vector of length 2 corresponding to the body and impression columns.</p>
 <p>It will return a data frame based on the document-feature matrix (dfm) object: rows are reports and columns are features.</p>
-<p>Example usage: ```{r create_text_features} unigrams &lt;- CreateTextFeatures(as.data.frame(segmented.reports),<br />
-id_col = “imageid”, text.cols = c(“body”,“impression”), n_gram_length = 1) bigrams &lt;- CreateTextFeatures(as.data.frame(segmented.reports),<br />
-id_col = “imageid”, text.cols = c(“body”,“impression”), n_gram_length = 2) trigrams &lt;- CreateTextFeatures(as.data.frame(segmented.reports),<br />
-id_col = “imageid”, text.cols = c(“body”,“impression”), n_gram_length = 3)</p>
-<p>text.dfm &lt;- unigrams %&gt;% inner_join(bigrams, by = “imageid”) %&gt;% inner_join(trigrams, by = “imageid”)</p>
-<p>```</p>
+<p>Example usage:</p>
+<pre class="{r}"><code>unigrams &lt;- CreateTextFeatures(as.data.frame(segmented.reports),  
+                               id_col = &quot;imageid&quot;, 
+                               text.cols = c(&quot;body&quot;,&quot;impression&quot;),
+                               n_gram_length = 1)
+bigrams &lt;- CreateTextFeatures(as.data.frame(segmented.reports),  
+                               id_col = &quot;imageid&quot;, 
+                               text.cols = c(&quot;body&quot;,&quot;impression&quot;),
+                               n_gram_length = 2)
+trigrams &lt;- CreateTextFeatures(as.data.frame(segmented.reports),  
+                               id_col = &quot;imageid&quot;, 
+                               text.cols = c(&quot;body&quot;,&quot;impression&quot;),
+                               n_gram_length = 3)
+
+text.dfm &lt;- unigrams %&gt;%
+  inner_join(bigrams, by = &quot;imageid&quot;) %&gt;%
+  inner_join(trigrams, by = &quot;imageid&quot;)
+</code></pre>
+<p><a name="MachineLearningNLP"></a></p>
 </div>
-<div id="machinelearningnlp" class="section level4">
-<h4>MachineLearningNLP</h4>
+<div id="machinelearningnlp" class="section level3">
+<h3>MachineLearningNLP</h3>
 <p>This function takes in features and outputs machine-learning NLP predictions. Three types of features are required:</p>
 <ul>
-<li>N-grams in section: This can be obtained using the  function.</li>
-<li>Report level regex and negex: This can be obtained using the  function (the .$regex.df.wide data frame).</li>
+<li>N-grams in section: This can be obtained using the <code>CreateTextFeatures</code> function.</li>
+<li>Report level regex and negex: This can be obtained using the <code>RuleBasedNLP</code> function (the <code>.$regex.df.wide</code> data frame).</li>
 <li>LIRE study site and imaging modality: These need to be formatted as indicator matrices (see example below).</li>
 </ul>
 <p>At the minimum, report level regex/negex and N-grams in section are required. The algorithm will still run if study site and imaging modality information is not available, however the accuracy is unknown. Since this algorithm was developed specific for reports from LIRE study sites, please use it on other report types with awareness.</p>
-<p>Example usage: ```{r ml} ### This is the same text.dfm in the demo. ### Need to make sure that the correct prefixes BODY and IMP are used! colnames(text.dfm) &lt;- gsub(“IMPRESSION”, “IMP”, colnames(text.dfm))</p>
+<p>Example usage:</p>
+<pre class="{r}"><code>### This is the same text.dfm in the demo.
+### Need to make sure that the correct prefixes BODY and IMP are used!
+colnames(text.dfm) &lt;- gsub(&quot;IMPRESSION&quot;, &quot;IMP&quot;, colnames(text.dfm))
+
+#### This series of code transform numeric site and imageTypeID (modality) into indicator matrices
+ftr &lt;- segmented.reports %&gt;% 
+  dplyr::select(imageid, siteID, imageTypeID) %&gt;%
+  dplyr::rename(site = siteID,
+                modality = imageTypeID) %&gt;%
+  dplyr::mutate(modality = ifelse(modality == 1, &quot;XR&quot;, &quot;MR&quot;)) %&gt;%
+  dplyr::mutate_all(as.factor)
+
+site.and.modality &lt;- predict(dummyVars(imageid ~ ., data = ftr), newdata = ftr) %&gt;%
+  as.data.frame() %&gt;%
+  dplyr::mutate(imageid = ftr$imageid)
+colnames(site.and.modality) &lt;- gsub(&quot;\\.&quot;, &quot;_&quot;, colnames(site.and.modality))
+
+text.dfm &lt;- text.dfm %&gt;%
+  left_join(site.and.modality, by = &quot;imageid&quot;)
+
+### Apply machine-learning model tuned parameters
+data(ml_feature_weights)
+
+ml.nlp.df &lt;- MachineLearningNLP(finding.list, 
+                         text.dfm, 
+                         regex.df.wide,
+                         ml_feature_weights,
+                         grouping_var = &quot;imageid&quot;)
+                            
+### Combine rules and ML into single data.frame
+nlp.df &lt;- segmented.reports %&gt;% dplyr::select(imageid, siteID, imageTypeID) %&gt;%
+  left_join(rules.nlp.df, by = &quot;imageid&quot;) %&gt;%
+  left_join(ml.nlp.df, by = &quot;imageid&quot;) %&gt;%
+  separate(imageid, into = c(&quot;patientID&quot;, &quot;examID&quot;), sep = &quot;_&quot;)
+
+View(nlp.df)</code></pre>
+<p><a name="AdvancedUsage"></a></p>
 </div>
-<div id="this-series-of-code-transform-numeric-site-and-imagetypeid-modality-into-indicator-matrices" class="section level4">
-<h4>This series of code transform numeric site and imageTypeID (modality) into indicator matrices</h4>
-<p>ftr &lt;- segmented.reports %&gt;% dplyr::select(imageid, siteID, imageTypeID) %&gt;% dplyr::rename(site = siteID, modality = imageTypeID) %&gt;% dplyr::mutate(modality = ifelse(modality == 1, “XR”, “MR”)) %&gt;% dplyr::mutate_all(as.factor)</p>
-<p>site.and.modality &lt;- predict(dummyVars(imageid ~ ., data = ftr), newdata = ftr) %&gt;% as.data.frame() %&gt;% dplyr::mutate(imageid = ftr$imageid) colnames(site.and.modality) &lt;- gsub(“\.”, “_“, colnames(site.and.modality))</p>
-<p>text.dfm &lt;- text.dfm %&gt;% left_join(site.and.modality, by = “imageid”)</p>
 </div>
-<div id="apply-machine-learning-model-tuned-parameters" class="section level3">
-<h3>Apply machine-learning model tuned parameters</h3>
-<p>data(ml_feature_weights)</p>
-<p>ml.nlp.df &lt;- MachineLearningNLP(finding.list, text.dfm, regex.df.wide, ml_feature_weights, grouping_var = “imageid”)</p>
+<div id="advanced-usage" class="section level2">
+<h2>Advanced Usage</h2>
+<p>Read this section if you are interested in modifying the source code for your projects. <a href="https://datawarrior.wordpress.com/2016/09/10/rjava-running-java-from-r-and-building-r-packages-wrapping-a-jar/">This reference</a> may be helpful.</p>
+<p><a name="ModifyJavaCode"></a></p>
+<div id="modifying-source-java-code" class="section level3">
+<h3>Modifying source Java code</h3>
+<p>If the source Java code needs to be modified for any reason (e.g. adding new keywords or findings), note that this needs to happen in two parts:</p>
+<ul>
+<li><a href="#LoadJava">Loading Java source code</a>: The source Java code is configured as a <a href="https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html">Maven project</a>. The easiest way to change source code is to use Eclipse, but you can use any other IDE of your choice.</li>
+<li><a href="#ExportJava">Packaging and exporting source code</a>: The modified source code needs to be packaged and exported into a JAR file so that R functions built on <code>rJava</code> can access it.</li>
+</ul>
+<p><a name="LoadJava"></a></p>
+<div id="loading-java-source-code" class="section level4">
+<h4>Loading Java source code</h4>
+<ol style="list-style-type: decimal">
+<li>Download <a href="https://www.eclipse.org/downloads/">Eclipse</a> - the IDE for JavaEE option. Also make sure the GitHub folder is downloaded (click on <code>clone/download</code> on project page - the green button).</li>
+<li>Start Eclipse (any workspace is fine).</li>
+<li>Click <code>File</code> –&gt; <code>Import</code> –&gt; <code>Maven</code> –&gt; <code>Existing Maven Projects</code>.</li>
+<li>Set root directory to <code>~path_to/LireNLPSystem/java</code> (<code>~path_to</code> is wherever you stored the downloaded GitHub folder).</li>
+<li>Verify that file <code>pom.xml</code> is in the project list, and load the project.</li>
+</ol>
+<p>Then you should be good to go to modify source code to tailor to project needs.</p>
+<p><a name="ExportJava"></a></p>
 </div>
-<div id="combine-rules-and-ml-into-single-data.frame" class="section level3">
-<h3>Combine rules and ML into single data.frame</h3>
-<p>nlp.df &lt;- segmented.reports %&gt;% dplyr::select(imageid, siteID, imageTypeID) %&gt;% left_join(rules.nlp.df, by = “imageid”) %&gt;% left_join(ml.nlp.df, by = “imageid”) %&gt;% separate(imageid, into = c(“patientID”, “examID”), sep = “_“)</p>
-<p>View(nlp.df) ```</p>
+<div id="packaging-and-exporting-source-code" class="section level4">
+<h4>Packaging and exporting source code</h4>
+<ol style="list-style-type: decimal">
+<li>Compile code, make sure it runs.</li>
+<li>In Eclipse, click <code>File</code> –&gt; <code>Export</code> –&gt; <code>Java</code> –&gt; <code>Runnable JAR file</code>.
+<ul>
+<li>Launch configuration: <code>RuleBasedNLP</code>.</li>
+<li>Export destination is <code>~path_to/LireNLPSystem/inst/java</code>; save as <code>RuleBasedNLP.jar</code>.</li>
+<li>Library handling: <code>Package required libraries into generated jar</code>.</li>
+</ul></li>
+<li>Click <code>Finish</code>.</li>
+</ol>
+<p><a name="UpdateRPackage"></a></p>
 </div>
-<div id="news-and-updates" class="section level3">
-<h3>News and updates</h3>
-<p>9/29/2017: Working on rewriting Java code for interface with R through rJava.</p>
-<p>10/6/2017: * Completed:<br />
-+ First end-to-end working pipeline. All the functions should work with the tiny example on this page. * Working on:<br />
-+ Unit testing + Speed up data processing especially when passing between R/Java + Re-writing code for generalizability.</p>
-<p>9/19/2017: * Easy loading of ML model coefficients</p>
+</div>
+<div id="updating-r-package" class="section level3">
+<h3>Updating R package</h3>
+<p>The R package is created using <a href="https://cran.r-project.org/web/packages/roxygen2/vignettes/roxygen2.html">roxygen</a>. Therefore documentation files (<code>.Rd</code> files in the <code>man</code> folder) are automatically generated. You may modify following snippet for package updates:</p>
+<pre class="{r}"><code>remove.packages(&quot;LireNLPSystem&quot;)
+library(&quot;devtools&quot;)
+library(roxygen2)
+setwd(&quot;~path_to_github_folder&quot;)
+setwd(&quot;./LireNLPSystem&quot;)
+document()
+setwd(&quot;..&quot;)
+install(&quot;LireNLPSystem&quot;)</code></pre>
+<p>Then, follow normal Git/GitHub procedures to update the package remotely.</p>
+<p><a name="UserMLWeights"></a></p>
+</div>
+<div id="user-supplied-feature-weights" class="section level3">
+<h3>User-supplied feature weights</h3>
+<p>To use user-supplied feature weights (instead of the ones tuned with LIRE training data), replace <code>ml_feature_weights</code> with a data frame having three columns: <code>finding_name | feature_name | feature_weight</code>. Note:</p>
+<ul>
+<li>All unique elements in <code>finding_name</code> column must be consistent with elements in <code>finding.list</code> vector.</li>
+<li>All entries in <code>feature_name</code> must be consistent with those created with the <code>CreateTextFeatures</code> function (otherwise the cross-product will throw an error).</li>
+</ul>
+<p><a name="GitHubStructure"></a></p>
+</div>
+</div>
+<div id="github-folder-structure" class="section level2">
+<h2>GitHub folder structure</h2>
+<div id="basic-roxygen-package-components" class="section level3">
+<h3>Basic <code>roxygen</code> package components</h3>
+<ul>
+<li><code>DESCRIPTION</code>: Description of the <code>R</code> package.</li>
+<li><code>NAMESPACE</code>: Generated by <code>roxygen</code> (do NOT edit by hand).</li>
+<li><code>README.md</code> and <code>README.html</code>: Wiki page for GitHub.</li>
+<li><code>inst/java</code>: Contains the <code>RuleBasedNLP.jar</code> file which is read by functions written with <code>rJava</code> interface.</li>
+<li><code>man</code>: Contains <code>.Rd</code> documentation files (do NOT edit by hand).</li>
+<li><code>R</code>: Contains the described 5 <code>.R</code> files as well as an <code>onLoad.R</code> file to load the JVM.</li>
+</ul>
+</div>
+<div id="additional-components" class="section level3">
+<h3>Additional Components</h3>
+<ul>
+<li><code>data</code> and <code>data-raw</code>: Contains files to load machine-learning feature weights. On package loading, file <code>process_data.R</code> reads in <code>ml_feature_weights.csv</code> and stores in <code>data/ml_feature_weights.rda</code>. The object <code>ml_feature_weights</code> is automatically loaded into the <code>R</code> environment.</li>
+<li><code>documentation</code>: Contains
+<ul>
+<li><code>ARAD_NLP_LIRE.pdf</code>: Accepted version of the paper.</li>
+<li><code>lire_finding_matrix.xlsx</code>: Detailed information on finding string names and data dictionaries.</li>
+</ul></li>
+<li><code>java</code>: Typical <a href="http://www.java2s.com/Tutorials/Java/Maven_Tutorial/1030__Maven_Directory_Structure.htm">Maven project structure</a>:
+<ul>
+<li><code>pom.xml</code>: File that contains configuration information about the project; here the POM is rather <a href="https://maven.apache.org/guides/introduction/introduction-to-the-pom.html#Minimal_POM">minimal</a>.</li>
+<li><code>src/main/java</code>: contains all the <code>.java</code> source files.</li>
+<li><code>src/main/resources</code> contains the <code>context.csv</code> and <code>stopwords.txt</code> files.</li>
+<li><code>src/test/</code> and <code>src/bin/</code> were auto-generated by Eclipse; not directly used by the project.</li>
+<li><code>target</code> is created by Maven and contains all the compiled classes, JAR files etc.</li>
+</ul></li>
+</ul>
 </div>
 </div>
 

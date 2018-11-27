@@ -1,11 +1,29 @@
 ---
 # LireNLPSystem package documentation
 ---
+## Table of Contents
 
-### Installation
+* [Installation](#Installation)
+    + [Troubleshoot: Configuring rJava on Mac](#Troubleshoot)
+* [Overview](#Overview)
+* [Main R functions](#MainR)
+    + [SectionSegmentation](#SectionSegmentation)
+    + [RuleBasedNLP_JavaSentence](#RuleBasedNLP_JavaSentence)
+    + [RuleBasedNLP](#RuleBasedNLP)
+    + [CreateTextFeatures](#CreateTextFeatures)
+    + [MachineLearningNLP](#MachineLearningNLP)
+* [Advanced usage](#AdvancedUsage)
+    + [Modifying source Java code](#ModifyJavaCode)
+    + [Updating R package](#UpdateRPackage)
+    + [User-supplied feature weights](#UserMLWeights)
+* [GitHub folder structure](#GitHubStructure)
+
+<a name="Installation"></a>
+
+## Installation
 
 To install, run the following code:
-```{r installation}
+```{r}
 install.packages("devtools")
 library("devtools")
 devtools::install_github("wlktan/LireNLPSystem")
@@ -26,47 +44,72 @@ library(tidyr)
 library(caret)
 
 ```
-### About
+<a name="Troubleshoot"></a>
 
-See project description here: https://docs.google.com/a/uw.edu/document/d/1O52W7TtHBVT8kDHx6PuBfVOKpJGo9FKp-T2bESbyrmM/edit?usp=sharing
+### Troubleshoot: Configuring rJava on Mac
+Installation should be straight-forward; however if you are using MacOS the dependency package rJava could throw errors. This is because R needs to know where Java is on the machine. In that case open Terminal and do the following which is adapted from [this source:](https://github.com/snowflakedb/dplyr-snowflakedb/wiki/Configuring-R-rJava-RJDBC-on-Mac-OS-X)
 
-More to come.
+First, install Xcode (if not already installed):
+```
+xcode-select --install
+```
 
-### Functions overview
+Then install Java8 (newer versions may exist but this should be sufficient):
+```
+curl -#ROL -b "oraclelicense=a"  http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jdk-8u60-macosx-x64.dmg
+open jdk-8u60-macosx-x64.dmg
+```
 
+Now, we need to tell R to use the installed Java 8 as ```JAVA_HOME```
+```
+R CMD javareconf
+```
+
+Finally, install ```rJava``` from source and compile it against the Java 8 JDK.
+```
+R --quiet -e 'install.packages("rJava", type="source", repos="http://cran.us.r-project.org")'
+```
+
+If you run into an error try:
+```
+curl -#ROL https://www.rforge.net/rJava/snapshot/rJava_0.9-8.tar.gz
+R CMD INSTALL rJava_0.9-8.tar.gz
+```
+
+You may also try searching for "configuring rJava on Mac" on the internet.
+
+<a name="Overview"></a>
+
+## Overview
 There are five main R functions in this package:  
 
-* SectionSegmentation
-* RuleBasedNLP_JavaSentence
-* RuleBasedNLP
-* CreateTextFeatures
-* MachineLearningNLP
+* [SectionSegmentation](#SectionSegmentation)
+* [RuleBasedNLP_JavaSentence](#RuleBasedNLP_JavaSentence)
+* [RuleBasedNLP](#RuleBasedNLP)
+* [CreateTextFeatures](#CreateTextFeatures)
+* [MachineLearningNLP](#MachineLearningNLP)
 
-These functions together creates the workflow for the NLP system for the LIRE project. The NLP system includes the 26 findings described in Tan et. all (Academic Radiology, 2018), as well as 10 additional ``rare and serious" findings.
+These functions together creates the workflow for the NLP system for the LIRE project. The NLP system includes the 26 findings described in Tan et. all (Academic Radiology, 2018), as well as 10 additional ```rare and serious``` findings. Please see File ```lire_finding_matrix.xlsx``` file, Sheet ```finding_matrix``` Column ```finding_string``` for the complete list.
 
-#### SectionSegmentation
+<a name="MainR"></a>
 
-This function takes in a data frame, and segments the \textt{imagereporttext} column into the following sections:
+## Main R functions
 
-* History
-* Exam
-* Comparison
-* Technique
-* Body
-* Impression
-* Datetime
+<a name="SectionSegmentation"></a>
 
-Some of these sections may be empty. This code is developed and validated ONLY for the four LIRE sites:
+### SectionSegmentation
+
+This function takes in a data frame, and segments the ```imagereporttext``` column into the following sections: ```History```, ```Exam```, ```Comparison```, ```Technique```, ```Body```, ```Impression```, ```Datetime```. Some of these sections may be empty. This code is developed and validated ONLY for the four LIRE sites:
 
 * site = 1: Kaiser Permanente Washington (previously Group Health)
 * site = 2: Kaiser Permanente Northen California
 * site = 3: Henry Ford
 * site = 4: Mayo Clinic
 
-The default is \texttt{site = 2}. If you are NOT using LIRE reports, the algorithm may be inaccurate.
+The default is ```site = 2```. If you are NOT using LIRE reports, the algorithm may be inaccurate.
 
 Example usage:
-```{r section_segmentation}
+```{r}
 
 ### This is fake data.
 text.df <- data.frame(patientID = c("W231", "W2242", "W452", "5235"),
@@ -89,18 +132,20 @@ View(segmented.reports)
 
 ```
 
-#### RuleBasedNLP_JavaSentence
+<a name="RuleBasedNLP_JavaSentence"></a>
+
+### RuleBasedNLP_JavaSentence
 
 This function takes in a data frame, with at the minimum these columns:
 
-* \texttt{imageid}: Unique identifier of report
-* \texttt{bodyText}: Column of text of report body
-* \texttt{impressionText}: Column of text of report impression
-* \texttt{findings_longstring}: String of findings separated with \texttt{;}, for example \texttt{disc_degeneration;endplate_edema}. Full finding list available in the lire_finding_matrix.xlsx file on GitHub page.
+* ```imageid```: Unique identifier of report
+* ```bodyText```: Column of text of report body
+* ```impressionText```: Column of text of report impression
+* ```findings_longstring```: String of findings separated with ;, for example disc_degeneration;endplate_edema. Full finding list available in the ```lire_finding_matrix.xlsx``` file on GitHub page.
 
-This function assumes reports are sectioned into body and impression. To use this function if only one column of report text is available, please create an extra column for impression and fill it with \texttt{NA}. 
+This function assumes reports are sectioned into body and impression. To use this function if only one column of report text is available, please create an extra column for impression and fill it with ```NA```. 
 
-The function passes the data frame to the RuleBasedNLP.jar file in \texttt{inst/java}, and outputs sentence level prediction of the following:
+The function passes the data frame to the ```RuleBasedNLP.jar``` file in ```inst/java```, and outputs sentence level prediction of the following:
 
 * Sentence: The exact sentence from report.
 * Section of sentence: Which section (body or impression) sentence is from.
@@ -111,7 +156,7 @@ The function passes the data frame to the RuleBasedNLP.jar file in \texttt{inst/
 Note that negex can only be 1 if regex is 1.
 
 Example usage:
-```{r rb_java}
+```{r}
 ### Create unique identifier for each report: For LIRE data, it is patientID + examID
 segmented.reports <- segmented.reports %>%
   dplyr::mutate(imageid = paste(patientID, examID, sep = "_"))
@@ -134,18 +179,20 @@ regex.df.java <- RuleBasedNLP_JavaSentence(segmented.reports,
                                )
 ```
 
-#### RuleBasedNLP
+<a name="RuleBasedNLP"></a>
 
-This function takes in the sentence-by-sentence output of the \texttt{RuleBasedNLP_JavaSentence} function, and aggregates over all sentences to get a report level prediction. For every finding, the logic is as follows:
+### RuleBasedNLP
+
+This function takes in the sentence-by-sentence output of the ```RuleBasedNLP_JavaSentence``` function, and aggregates over all sentences to get a report level prediction. For every finding, the logic is as follows:
 
 * Report level prediction: See lookup table below.
-* Section level prediction:
-  + 1, if at least one sentence with a non-negated keyword.
-  + -1, if all keywords are negated.
-  + 0, otherwise.
+* Section level prediction:  
+    + 1, if at least one sentence with a non-negated keyword.
+    + -1, if all keywords are negated.
+    + 0, otherwise.
   
 Example usage:
-```{r rb}
+```{r}
 
 rbnlp.tb <- data.frame(body = c(1,1,1,0,0,0,-1,-1,-1),
 impression = c(1,0,-1,1,0,-1,1,0,-1),
@@ -154,7 +201,7 @@ rules_nlp = c(1,1,-1,1,0,-1,1,-1,-1))
 View(rbnlp.tb)                       
 regex.df.list <- RuleBasedNLP(regex.df.java) 
 
-# This is the ``wide" data frame to be used in the machine-learning predictions
+# This is the "wide" data frame to be used in the machine-learning predictions
 regex.df.wide <- regex.df.list$regex.df.wide
 
 # This is the data frame of rules NLP prediction
@@ -162,19 +209,21 @@ rules.nlp.df <- regex.df.list$rules.nlp.df
 
 ```
 
-#### CreateTextFeatures
+<a name="CreateTextFeatures"></a>
+
+### CreateTextFeatures
 
 This function takes a data frame with at the minimum these columns:
 
-* \texttt{imageid}: Unique identifier of report
-* \texttt{text.cols}: Columns of text of report body
+* ```imageid```: Unique identifier of report
+* ```text.cols```: Columns of text of report body
 
-It will create binary indicator of N-gram (unigrams, bigrams, trigrams) features separately for each column of text. However, to pre-process data so that it is compatible with the machine-learning feature weights, \texttt{text.cols} should be a vector of length 2 corresponding to the body and impression columns.
+It will create binary indicator of N-gram (unigrams, bigrams, trigrams) features separately for each column of text. However, to pre-process data so that it is compatible with the machine-learning feature weights, ```text.cols``` should be a vector of length 2 corresponding to the body and impression columns.
 
 It will return a data frame based on the document-feature matrix (dfm) object: rows are reports and columns are features.
 
 Example usage:
-```{r create_text_features}
+```{r}
 unigrams <- CreateTextFeatures(as.data.frame(segmented.reports),  
                                id_col = "imageid", 
                                text.cols = c("body","impression"),
@@ -194,18 +243,20 @@ text.dfm <- unigrams %>%
 
 ```
 
-#### MachineLearningNLP
+<a name="MachineLearningNLP"></a>
+
+### MachineLearningNLP
 
 This function takes in features and outputs machine-learning NLP predictions. Three types of features are required:
 
-* N-grams in section: This can be obtained using the \texttt{CreateTextFeatures} function.
-* Report level regex and negex: This can be obtained using the \texttt{RuleBasedNLP} function (the .$regex.df.wide data frame).
+* N-grams in section: This can be obtained using the ```CreateTextFeatures``` function.
+* Report level regex and negex: This can be obtained using the ```RuleBasedNLP``` function (the ```.$regex.df.wide``` data frame).
 * LIRE study site and imaging modality: These need to be formatted as indicator matrices (see example below).
 
 At the minimum, report level regex/negex and N-grams in section are required. The algorithm will still run if study site and imaging modality information is not available, however the accuracy is unknown. Since this algorithm was developed specific for reports from LIRE study sites, please use it on other report types with awareness.
 
 Example usage:
-```{r ml}
+```{r}
 ### This is the same text.dfm in the demo.
 ### Need to make sure that the correct prefixes BODY and IMP are used!
 colnames(text.dfm) <- gsub("IMPRESSION", "IMP", colnames(text.dfm))
@@ -244,18 +295,95 @@ nlp.df <- segmented.reports %>% dplyr::select(imageid, siteID, imageTypeID) %>%
 View(nlp.df)
 ```
 
+<a name="AdvancedUsage"></a>
 
-### News and updates
-9/29/2017: Working on rewriting Java code for interface with R through rJava.
+## Advanced Usage
 
-10/6/2017: 
-* Completed:  
-  + First end-to-end working pipeline. All the functions should work with the tiny example on this page. 
-* Working on:  
-  + Unit testing
-  + Speed up data processing especially when passing between R/Java
-  + Re-writing code for generalizability.
+Read this section if you are interested in modifying the source code for your projects. [This reference](https://datawarrior.wordpress.com/2016/09/10/rjava-running-java-from-r-and-building-r-packages-wrapping-a-jar/) may be helpful.
 
-9/19/2017: 
-* Easy loading of ML model coefficients
+<a name="ModifyJavaCode"></a>
+
+### Modifying source Java code
+
+If the source Java code needs to be modified for any reason (e.g. adding new keywords or findings), note that this needs to happen in two parts:
+
+* [Loading Java source code](#LoadJava): The source Java code is configured as a [Maven project](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html). The easiest way to change source code is to use Eclipse, but you can use any other IDE of your choice.
+* [Packaging and exporting source code](#ExportJava): The modified source code needs to be packaged and exported into a JAR file so that R functions built on ```rJava``` can access it.
+
+<a name="LoadJava"></a>
+
+#### Loading Java source code
+
+1. Download [Eclipse](https://www.eclipse.org/downloads/) - the IDE for JavaEE option. Also make sure the GitHub folder is downloaded (click on ```clone/download``` on project page - the green button).
+2. Start Eclipse (any workspace is fine).
+3. Click ```File``` --> ```Import``` --> ```Maven``` --> ```Existing Maven Projects```. 
+4. Set root directory to ```~path_to/LireNLPSystem/java``` (```~path_to``` is wherever you stored the downloaded GitHub folder).
+5. Verify that file ```pom.xml``` is in the project list, and load the project.
+
+Then you should be good to go to modify source code to tailor to project needs.
+
+<a name="ExportJava"></a>
+
+#### Packaging and exporting source code
+
+1. Compile code, make sure it runs.
+2. In Eclipse, click ```File``` --> ```Export``` --> ```Java``` --> ```Runnable JAR file```.
+    + Launch configuration: ```RuleBasedNLP```.
+    + Export destination is ```~path_to/LireNLPSystem/inst/java```; save as ```RuleBasedNLP.jar```.
+    + Library handling: ```Package required libraries into generated jar```.
+3. Click ```Finish```.
+
+<a name="UpdateRPackage"></a>
+
+### Updating R package
+
+The R package is created using [roxygen](https://cran.r-project.org/web/packages/roxygen2/vignettes/roxygen2.html). Therefore documentation files (```.Rd``` files in the ```man``` folder) are automatically generated. You may modify following snippet for package updates:
+
+```{r}
+remove.packages("LireNLPSystem")
+library("devtools")
+library(roxygen2)
+setwd("~path_to_github_folder")
+setwd("./LireNLPSystem")
+document()
+setwd("..")
+install("LireNLPSystem")
+```
+
+Then, follow normal Git/GitHub procedures to update the package remotely.
+
+<a name="UserMLWeights"></a>
+
+### User-supplied feature weights
+To use user-supplied feature weights (instead of the ones tuned with LIRE training data), replace ```ml_feature_weights``` with a data frame having three columns: ```finding_name | feature_name | feature_weight```. Note:
+
+* All unique elements in ```finding_name``` column must be consistent with elements in ```finding.list``` vector.
+* All entries in ```feature_name``` must be consistent with those created with the ```CreateTextFeatures``` function (otherwise the cross-product will throw an error).
+
+
+<a name="GitHubStructure"></a>
+
+## GitHub folder structure
+
+### Basic ```roxygen``` package components
+
+* ```DESCRIPTION```: Description of the ```R``` package.
+* ```NAMESPACE```: Generated by ```roxygen``` (do NOT edit by hand).
+* ```README.md``` and ```README.html```: Wiki page for GitHub.
+* ```inst/java```: Contains the ```RuleBasedNLP.jar``` file which is read by functions written with ```rJava``` interface.
+* ```man```: Contains ```.Rd``` documentation files (do NOT edit by hand).
+* ```R```: Contains the described 5 ```.R``` files as well as an ```onLoad.R``` file to load the JVM. 
+
+### Additional Components
+
+* ```data``` and ```data-raw```: Contains files to load machine-learning feature weights. On package loading, file ```process_data.R``` reads in ```ml_feature_weights.csv``` and stores in ```data/ml_feature_weights.rda```. The object ```ml_feature_weights``` is automatically loaded into the ```R``` environment.
+* ```documentation```: Contains  
+    + ```ARAD_NLP_LIRE.pdf```: Accepted version of the paper.
+    + ```lire_finding_matrix.xlsx```: Detailed information on finding string names and data dictionaries.
+* ```java```: Typical [Maven project structure](http://www.java2s.com/Tutorials/Java/Maven_Tutorial/1030__Maven_Directory_Structure.htm):
+    + ```pom.xml```: File that contains configuration information about the project; here the POM is rather [minimal](https://maven.apache.org/guides/introduction/introduction-to-the-pom.html#Minimal_POM).
+    + ```src/main/java```: contains all the ```.java``` source files.
+    + ```src/main/resources``` contains the ```context.csv``` and ```stopwords.txt``` files.
+    + ```src/test/``` and ```src/bin/``` were auto-generated by Eclipse; not directly used by the project.
+    + ```target``` is created by Maven and contains all the compiled classes, JAR files etc.
 

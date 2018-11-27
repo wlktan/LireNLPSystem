@@ -6,8 +6,14 @@
 #' @param text.cols Vector of findings text column names in segmented.reports, defaults to  c("body","impression")
 #' @param all.stop.words List of stop words, defaults to English stopword list excluding negation
 #' @param finding.dictionary Dictionary object to map findings, defaults to NULL
-#' @param min_count Minimum count of total word occurence across all documents/reports
-#' @param min_doc Minimum count of number of documents for which word occurs
+#' @param docfreq See quanteda::dfm_trim; One of "count", "inverse", "inversemax", "inverseprob", "unary"
+#' @param min_doc_prop minimum/maximum values of a feature's document frequency, below/above which features will be removed
+#' @param max_doc_prop
+#' @param termfreq See quanteda::dfm_trim; One of "count", "prop", "propmax", "logcount", "boolean", "augmented", "logave"
+#' @param min_term_freq minimum/maximum values of feature frequencies across all documents, below/above which features will be removed
+#' @param max_term_freq Above
+#' @param tf_type See quanteda::dfm_weight; One of "count", "prop", "propmax", "logcount", "boolean", "augmented", "logave"
+#' @param df_type See quanteda::docfreq; One of "count", "inverse", "inversemax", "inverseprob", "unary"
 #' @param n_gram_length Unigram, bigram, or trigram features; defaults to 3 (trigrams)
 #' @keywords CreateTextFeatures
 #' @import quanteda
@@ -22,8 +28,14 @@ CreateTextFeatures <- function(segmented.reports,
                                text.cols = c("body","impression"),
                                all.stop.words = setdiff(stopwords(), c("no", "not", "nor")),
                                finding.dictionary = NULL,
+                               docfreq = "prop",
                                min_doc_prop = 0,
                                max_doc_prop = 1,
+                               termfreq = "count",
+                               min_term_freq = 1,
+                               max_term_freq = NULL,
+                               tf_type = "boolean",
+                               df_type = "unary",
                                n_gram_length = 1){
   dfm.list <- list()
   ### create feature matrix for each text column
@@ -50,7 +62,9 @@ CreateTextFeatures <- function(segmented.reports,
         quanteda::dfm_trim(.,
                            min_docfreq = min_doc_prop,
                            max_docfreq = max_doc_prop,
-                           termfreq_type = "prop") %>%
+                           docfreq_type = docfreq) %>%
+        quanteda:dfm_tfidf(scheme_tf = tf_type, # change count to binary
+                           scheme_df = df_type) %>%
         as.data.frame(.) %>%
         dplyr::rename(imageid = document)
 

@@ -7,7 +7,9 @@
 CreateTextFeatures(segmented.reports, id_col = "imageid",
   text.cols = c("body", "impression"),
   all.stop.words = setdiff(stopwords(), c("no", "not", "nor")),
-  finding.dictionary = NULL, min_doc_prop = 0, max_doc_prop = 1,
+  finding.dictionary = NULL, docfreq = "prop", min_doc_prop = 0,
+  max_doc_prop = 1, termfreq = "count", min_term_freq = 1,
+  max_term_freq = NULL, tf_type = "boolean", df_type = "unary",
   n_gram_length = 1)
 }
 \arguments{
@@ -21,11 +23,21 @@ CreateTextFeatures(segmented.reports, id_col = "imageid",
 
 \item{finding.dictionary}{Dictionary object to map findings, defaults to NULL}
 
+\item{docfreq}{See quanteda::dfm_trim; One of "count", "inverse", "inversemax", "inverseprob", "unary"}
+
+\item{min_doc_prop}{minimum/maximum values of a feature's document frequency, below/above which features will be removed}
+
+\item{termfreq}{See quanteda::dfm_trim; One of "count", "prop", "propmax", "logcount", "boolean", "augmented", "logave"}
+
+\item{min_term_freq}{minimum/maximum values of feature frequencies across all documents, below/above which features will be removed}
+
+\item{max_term_freq}{Above}
+
+\item{tf_type}{See quanteda::dfm_weight; One of "count", "prop", "propmax", "logcount", "boolean", "augmented", "logave"}
+
+\item{df_type}{See quanteda::docfreq; One of "count", "inverse", "inversemax", "inverseprob", "unary"}
+
 \item{n_gram_length}{Unigram, bigram, or trigram features; defaults to 3 (trigrams)}
-
-\item{min_count}{Minimum count of total word occurence across all documents/reports}
-
-\item{min_doc}{Minimum count of number of documents for which word occurs}
 }
 \value{
 A document frequency matrix with each row as a unique report,

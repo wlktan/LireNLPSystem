@@ -14,9 +14,8 @@ import java.util.regex.Pattern;
 public class RuleBasedNLP{
 
 	public static ArrayList<String> negationPatterns = new ArrayList<String>();
-	public static ArrayList<String> keywordsList = new ArrayList<String>();
 	public static ArrayList<String> fileStopWords = new ArrayList<String>();
-	public static List<List<String>> errorArray = new ArrayList<List<String>>();
+	public static List<List<String>> outputArray = new ArrayList<List<String>>();
 	public static final String ENCODING = "UTF-8";
 	public static final String DELIMITER = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 	public static final String separator = "\t";
@@ -25,17 +24,6 @@ public class RuleBasedNLP{
 	public static final String[] neg = {"1", "1"};
 	public static final int MAX_WINDOW = 15; // Number of spacings between negation and regular expression in a sentence
 
-	public String SayHello(String username){
-		String result = new String("Hello, my friend " + username + "!");
-		return result;
-	}
-
-	public double AddTwoNumbers(double a, double b){
-		double sum = a + b;
-		return sum;
-	}
-
-	// static for testing with the main function (not for export to R)
 	public String[][] GetRegexNegex(String[][] inputDF,
 			String imageid,
 			String bodyText,
@@ -67,26 +55,7 @@ public class RuleBasedNLP{
 			FindingListKeywords.remove(key);
 		}
 		System.out.println("Keyword dictionary loaded for " + FindingListKeywords.size() + " findings."); 
-		
-		// WORKINPROGRESS: Migrate KeywordDictionary.java from Dictionary class to CSV file
-		/*
-		String keywordFile = "keywords.csv";
-		ClassLoader loadKeyword = Thread.currentThread().getContextClassLoader();
-		InputStream isKeyword = loadKeyword.getResourceAsStream(keywordFile);
-		InputStreamReader isrKeyword = new InputStreamReader(isKeyword);
-		BufferedReader brKeyword = new BufferedReader(isrKeyword);
-		
-		String Keywordline;
-		while ((Keywordline = brKeyword.readLine()) != null) 
-		{
-			keywordsList.add(Keywordline);
-		}
-		brKeyword.close();
-		isrKeyword.close();
-		isKeyword.close();
-		System.out.println(keywordsList);*/
-		// END WORKINPROGRESS
-				
+						
 		/*Initialize context file using the context.csv input downloaded from fastcontext GitHub page 
 		 * Please see: https://github.com/jianlins/FastContext */
 		String contextFile = "context.csv";
@@ -127,56 +96,22 @@ public class RuleBasedNLP{
 		System.out.println("Loaded " + stopwordsFile + " with "+ fileStopWords.size() + " stopwords.");
 		
 		/* Run NLP algorithm */
-		errorArray = new ArrayList<List<String>>();
+		outputArray = new ArrayList<List<String>>();
 		ProcessReport textProcesser = new ProcessReport();	
 		textProcesser.getRegex(df, 
 				imageid, 
 				bodyText, 
 				impressionText,
 				FindingListKeywords);
-		
-		// For debugging..
-		//System.out.println(errorArray.size());
-/*		for(List<String> row: errorArray){
-			System.out.println(row);
-		}*/
 
 		/* Convert 2D ArrayList --> Array */
-		String[][] outputDF = new String[errorArray.size()][];
+		String[][] outputDF = new String[outputArray.size()][];
 		int i = 0;
-		for (List<String> row : errorArray){
+		for (List<String> row : outputArray){
 			outputDF[i++] = row.toArray(new String[row.size()]);
 		}
 			
 		return outputDF;  
 	}
-
-/*	public static void main(String[] args) throws Exception{
-		// to test the algorithm... probably better to move this to a unit test thing
-		String[][]inputdf = {{"imageid", "W131", "W122", "W21442"},
-				{"findings", "No disc bulge", "Spondyloarthropathys.", "Osteoporotic fracture."},
-				{"impression", "Some impression of the endplate", "spine fracture", "Normal"}};
-				
-		String imageid = "imageid";
-		String bodyText = "findings";
-		String impressionText = "impression";
-		String findings_longstring = "endplate_edema;fracture;any_stenosis";
-
-		String[][] test = GetRegexNegex(inputdf,
-				imageid,
-				bodyText,
-				impressionText,
-				findings_longstring);
-
-		System.out.println(test.length);
-		for(int i=0; i<test.length; i++){
-			for(int j=0; j<test[i].length; j++){
-				System.out.print(test[i][j] + " ");
-			}
-			System.out.println("");
-		}
-
-	} */
-	// End test block
 }
 
